@@ -59,20 +59,20 @@ class MainWindow(QMainWindow):
         if bibtexFile:
             print(bibtexFile)
 
-        # Bibtex parser will be here
-        # with open(bibtexFile) as bibtex:
-        #     try:
-        #         bibtex_database = bibtexparser.load(bibtex)
-        #     except Exception:
-        #         print(format(Exception))
-        #         QMessageBox.warning(QMessageBox(), 'Error', 'Could not load Bibtex file.')
-        #     keyys = bibtex_database.entries
-        #     print(keyys[0].keys())
-        #     author = bibtex_database.entries[0]["author"]  # x yerine istenileni yaz ("title") mesela
-        #     year = bibtex_database.entries[0]["year"]
-        #     title = bibtex_database.entries[0]["title"]
-        #     type1 = bibtex_database.entries[0]["ENTRYTYPE"]
-        #     print(author, year, title, type1)
+        #Bibtex parser will be here
+        with open(bibtexFile) as bibtex:
+            try:
+                bibtex_database = bibtexparser.load(bibtex)
+            except Exception:
+                print(format(Exception))
+                QMessageBox.warning(QMessageBox(), 'Error', 'Could not load Bibtex file.')
+            keyys = bibtex_database.entries
+            print(keyys[0].keys())
+            author = bibtex_database.entries[0]["author"]  # x yerine istenileni yaz ("title") mesela
+            year = bibtex_database.entries[0]["year"]
+            title = bibtex_database.entries[0]["title"]
+            type1 = bibtex_database.entries[0]["ENTRYTYPE"]
+            print(author, year, title, type1)
             data = {[author, year, type1, title]}
 
             self.tableWidget.setRowCount(0)
