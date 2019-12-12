@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
         self.tableWidget.verticalHeader().setStretchLastSection(False)
-        self.tableWidget.setHorizontalHeaderLabels(("No.", "Author", "Year", "Type", "Title"))
+        self.tableWidget.setHorizontalHeaderLabels(("Author.", "Year", "Title", "Type", "Bibtex Key"))
 
         toolbar = QToolBar()
         toolbar.setMovable(False)
@@ -61,7 +61,26 @@ class MainWindow(QMainWindow):
         btn_searchBibtex_action.setStatusTip('Search')
         toolbar.addAction(btn_searchBibtex_action)
 
+#-------------------------------------------------------------------------------------------
+#DUMMYLERI KALDIRDKTAN SONRA BU KISIMI ICERI ALMAMIZ GEREK loaddata(...) 
 
+         #Load datada kullanılcak olan değişkenleri ekleyebilirsiniz
+    
+    #def loadData(self, author, title, year, type1):
+    
+        #verileri doğru biçimde çekmek için insertRow kullandım
+        #self.tableWidget.insertRow(0)
+        
+        #Aşağıdaki biçimde istediğiniz veriyi çağırabilirsiniz
+        #Eğer yeni bir veri tipi çağıracaksanız selectBibtex fonksiyonun aşağısındaki kısımdan parser ile oluşurabilirisiniz.
+        #self.tableWidget.setItem(0, 0, QTableWidgetItem(author))
+        #self.tableWidget.setItem(0, 1, QTableWidgetItem(title))
+        #self.tableWidget.setItem(0, 2, QTableWidgetItem(year))
+        #self.tableWidget.setItem(0, 3, QTableWidgetItem(type1))
+        
+#-------------------------------------------------------------------------------------------        
+        
+        
     def loaddata(self):
         # Dummy data for searching
         self.tableWidget.setRowCount(5)
