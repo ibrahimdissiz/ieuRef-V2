@@ -62,6 +62,7 @@ class MainWindow(QMainWindow):
         btn_searchBibtex_action.setStatusTip('Search')
         toolbar.addAction(btn_searchBibtex_action)
 
+
     def loaddata(self, author, title, year, type1):
         # Dummy data for searching
         # self.tableWidget.setRowCount(5)
@@ -134,20 +135,19 @@ class MainWindow(QMainWindow):
                 print(format(Exception))
                 QMessageBox.warning(QMessageBox(), 'Error', 'Could not load Bibtex file.')
 
-
 class CreateDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(CreateDialog, self).__init__(*args, **kwargs)
-        # Necati Ozkent Task
-        # Creating entry code will be here
-        # Different types will have different fields
+        #Necati Ozkent Task
+        #Creating entry code will be here
+        #Different types will have different fields
 
 
 class SearchDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(SearchDialog, self).__init__(*args, **kwargs)
-        # Pelinsu Arslan Task
-        # Search code will be here
+        #Pelinsu Arslan Task
+        #Search code will be here
 
 
 app = QApplication(sys.argv)
