@@ -18,14 +18,15 @@ class MainWindow(QMainWindow):
         self.tableWidget = QTableWidget()
         self.setCentralWidget(self.tableWidget)
         self.tableWidget.setAlternatingRowColors(True)
-        self.tableWidget.setColumnCount(5)
+        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setColumnWidth(0, 300)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         self.tableWidget.horizontalHeader().setSortIndicatorShown(False)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
         self.tableWidget.verticalHeader().setStretchLastSection(False)
-        self.tableWidget.setHorizontalHeaderLabels(("No.", "Author", "Year", "Type", "Title"))
+        self.tableWidget.setHorizontalHeaderLabels(("Author", "Year", "Type", "Title"))
 
         toolbar = QToolBar()
         toolbar.setMovable(False)
@@ -61,39 +62,44 @@ class MainWindow(QMainWindow):
         btn_searchBibtex_action.setStatusTip('Search')
         toolbar.addAction(btn_searchBibtex_action)
 
-
-    def loaddata(self):
+    def loaddata(self, author, title, year, type1):
         # Dummy data for searching
-        self.tableWidget.setRowCount(5)
-        self.tableWidget.setItem(0, 0, QTableWidgetItem("1"))
-        self.tableWidget.setItem(0, 1, QTableWidgetItem("Cai, Hongyun and Zheng, Vincent W. and Zhu, Fanwei and Chang, Kevin Chen-Chuan and Huang, Zi"))
-        self.tableWidget.setItem(0, 2, QTableWidgetItem("2017"))
-        self.tableWidget.setItem(0, 3, QTableWidgetItem("article"))
-        self.tableWidget.setItem(0, 4, QTableWidgetItem("From Community Detection to Community Profiling"))
+        # self.tableWidget.setRowCount(5)
+        # self.tableWidget.setItem(0, 0, QTableWidgetItem("1"))
+        # self.tableWidget.setItem(0, 1, QTableWidgetItem("Cai, Hongyun and Zheng, Vincent W. and Zhu, Fanwei and Chang, Kevin Chen-Chuan and Huang, Zi"))
+        # self.tableWidget.setItem(0, 2, QTableWidgetItem("2017"))
+        # self.tableWidget.setItem(0, 3, QTableWidgetItem("article"))
+        # self.tableWidget.setItem(0, 4, QTableWidgetItem("From Community Detection to Community Profiling"))
+        #
+        # self.tableWidget.setItem(1, 0, QTableWidgetItem("2"))
+        # self.tableWidget.setItem(1, 1, QTableWidgetItem("Jantz, Michael R. and Robinson, Forrest J. and Kulkarni, Prasad A."))
+        # self.tableWidget.setItem(1, 2, QTableWidgetItem("2016"))
+        # self.tableWidget.setItem(1, 3, QTableWidgetItem("article"))
+        # self.tableWidget.setItem(1, 4, QTableWidgetItem("Impact of Intrinsic Profiling Limitations on Effectiveness of Adaptive Optimizations"))
+        #
+        # self.tableWidget.setItem(2, 0, QTableWidgetItem("3"))
+        # self.tableWidget.setItem(2, 1, QTableWidgetItem("Sharma, Sanket S. and De Choudhury, Munmun"))
+        # self.tableWidget.setItem(2, 2, QTableWidgetItem("2015"))
+        # self.tableWidget.setItem(2, 3, QTableWidgetItem("inproceedings"))
+        # self.tableWidget.setItem(2, 4, QTableWidgetItem("Measuring and Characterizing Nutritional Information of Food and Ingestion Content in Instagram"))
+        #
+        # self.tableWidget.setItem(3, 0, QTableWidgetItem("4"))
+        # self.tableWidget.setItem(3, 1, QTableWidgetItem("Zhan, Ming and Tu, Ruibo and Yu, Qin"))
+        # self.tableWidget.setItem(3, 2, QTableWidgetItem("2018"))
+        # self.tableWidget.setItem(3, 3, QTableWidgetItem("inproceedings"))
+        # self.tableWidget.setItem(3, 4, QTableWidgetItem("Understanding Readers: Conducting Sentiment Analysis of Instagram Captions"))
+        #
+        # self.tableWidget.setItem(4, 0, QTableWidgetItem("5"))
+        # self.tableWidget.setItem(4, 1, QTableWidgetItem("Schlauch, Wolfgang E. and Zweig, Katharina A. and Theory, Graph and Analysis, Network"))
+        # self.tableWidget.setItem(4, 2, QTableWidgetItem("2015"))
+        # self.tableWidget.setItem(4, 3, QTableWidgetItem("inproceedings"))
+        # self.tableWidget.setItem(4, 4, QTableWidgetItem("Influence of the Null-Model on Motif Detection"))
 
-        self.tableWidget.setItem(1, 0, QTableWidgetItem("2"))
-        self.tableWidget.setItem(1, 1, QTableWidgetItem("Jantz, Michael R. and Robinson, Forrest J. and Kulkarni, Prasad A."))
-        self.tableWidget.setItem(1, 2, QTableWidgetItem("2016"))
-        self.tableWidget.setItem(1, 3, QTableWidgetItem("article"))
-        self.tableWidget.setItem(1, 4, QTableWidgetItem("Impact of Intrinsic Profiling Limitations on Effectiveness of Adaptive Optimizations"))
-
-        self.tableWidget.setItem(2, 0, QTableWidgetItem("3"))
-        self.tableWidget.setItem(2, 1, QTableWidgetItem("Sharma, Sanket S. and De Choudhury, Munmun"))
-        self.tableWidget.setItem(2, 2, QTableWidgetItem("2015"))
-        self.tableWidget.setItem(2, 3, QTableWidgetItem("inproceedings"))
-        self.tableWidget.setItem(2, 4, QTableWidgetItem("Measuring and Characterizing Nutritional Information of Food and Ingestion Content in Instagram"))
-
-        self.tableWidget.setItem(3, 0, QTableWidgetItem("4"))
-        self.tableWidget.setItem(3, 1, QTableWidgetItem("Zhan, Ming and Tu, Ruibo and Yu, Qin"))
-        self.tableWidget.setItem(3, 2, QTableWidgetItem("2018"))
-        self.tableWidget.setItem(3, 3, QTableWidgetItem("inproceedings"))
-        self.tableWidget.setItem(3, 4, QTableWidgetItem("Understanding Readers: Conducting Sentiment Analysis of Instagram Captions"))
-
-        self.tableWidget.setItem(4, 0, QTableWidgetItem("5"))
-        self.tableWidget.setItem(4, 1, QTableWidgetItem("Schlauch, Wolfgang E. and Zweig, Katharina A. and Theory, Graph and Analysis, Network"))
-        self.tableWidget.setItem(4, 2, QTableWidgetItem("2015"))
-        self.tableWidget.setItem(4, 3, QTableWidgetItem("inproceedings"))
-        self.tableWidget.setItem(4, 4, QTableWidgetItem("Influence of the Null-Model on Motif Detection"))
+        self.tableWidget.insertRow(0)
+        self.tableWidget.setItem(0, 0, QTableWidgetItem(author))
+        self.tableWidget.setItem(0, 1, QTableWidgetItem(title))
+        self.tableWidget.setItem(0, 2, QTableWidgetItem(year))
+        self.tableWidget.setItem(0, 3, QTableWidgetItem(type1))
 
     def createBibtex(self):
         dlg = CreateDialog()
@@ -107,50 +113,45 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         bibtexFile, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
                                                     "BibTeX Files (*.bib)", options=options)
-        if bibtexFile:
-            print(bibtexFile)
-        # dlg = SelectDialog()
-        # dlg.exec_()
 
         with open(bibtexFile) as bibtex:
 
             try:
                 bibtex_database = bibtexparser.load(bibtex)
+                keyys = bibtex_database.entries
+                print(keyys[0].keys())
+                author = bibtex_database.entries[0]["author"]  # x yerine istenileni yaz ("title") mesela
+                year = bibtex_database.entries[0]["year"]
+                title = bibtex_database.entries[0]["title"]
+                type1 = bibtex_database.entries[0]["ENTRYTYPE"]
+                print(author)
+                print(year)
+                print(title)
+                print(type1)
+                self.loaddata(author, year, type1, title)
+
             except Exception:
                 print(format(Exception))
                 QMessageBox.warning(QMessageBox(), 'Error', 'Could not load Bibtex file.')
-            keyys = bibtex_database.entries
-            print(keyys[0].keys())
-            author = bibtex_database.entries[0]["author"]  # x yerine istenileni yaz ("title") mesela
-            year = bibtex_database.entries[0]["year"]
-            title = bibtex_database.entries[0]["title"]
-            type1 = bibtex_database.entries[0]["ENTRYTYPE"]
-            self.loadData(author, year, title, type1)
-
-            print(author)
-            print(year)
-            print(title)
-            print(type1)
 
 
 class CreateDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(CreateDialog, self).__init__(*args, **kwargs)
-        #Necati Ozkent Task
-        #Creating entry code will be here
-        #Different types will have different fields
+        # Necati Ozkent Task
+        # Creating entry code will be here
+        # Different types will have different fields
 
 
 class SearchDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(SearchDialog, self).__init__(*args, **kwargs)
-        #Pelinsu Arslan Task
-        #Search code will be here
+        # Pelinsu Arslan Task
+        # Search code will be here
 
 
 app = QApplication(sys.argv)
 if (QDialog.Accepted == True):
     window = MainWindow()
     window.show()
-    window.loaddata()
 sys.exit(app.exec_())
