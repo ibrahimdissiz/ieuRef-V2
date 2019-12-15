@@ -62,7 +62,6 @@ class MainWindow(QMainWindow):
         btn_searchBibtex_action.setStatusTip('Search')
         toolbar.addAction(btn_searchBibtex_action)
 
-
     def loaddata(self, author, title, year, type1):
         # Dummy data for searching
         # self.tableWidget.setRowCount(5)
@@ -135,19 +134,507 @@ class MainWindow(QMainWindow):
                 print(format(Exception))
                 QMessageBox.warning(QMessageBox(), 'Error', 'Could not load Bibtex file.')
 
+
 class CreateDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(CreateDialog, self).__init__(*args, **kwargs)
-        #Necati Ozkent Task
-        #Creating entry code will be here
-        #Different types will have different fields
 
+        self.setWindowTitle("Add New ")
+        self.setFixedWidth(600)
+        self.setFixedHeight(300)
+
+        self.setWindowTitle("Create New BibTeX file")
+        self.setFixedWidth(300)
+        self.setFixedHeight(100)
+
+        self.boxlabel = QLabel("Entry Type:")
+
+        layout = QFormLayout()
+        self.typeinput = QComboBox()
+        self.typeinput.addItem("-Please select a BibTeX file type")
+        self.typeinput.addItem("Article")
+        self.typeinput.addItem("Book")
+        self.typeinput.addItem("Journal")
+        self.typeinput.addItem("Proceeding")
+        self.typeinput.addItem("InProceeding")
+        self.typeinput.addItem("MasterThesis")
+        self.typeinput.addItem("PhdThesis")
+        self.typeinput.addItem("Unpublished")
+        self.typeinput.addItem("Misc")
+        self.typeinput.activated[str].connect(self.selected)
+
+        layout.addWidget(self.boxlabel)
+        layout.addWidget(self.typeinput)
+        self.setLayout(layout)
+
+    def selected(self, data):
+        if data == "Article":
+            dlc = Article()
+            dlc.exec_()
+        if data == "Book":
+            dlc = Book()
+            dlc.exec_()
+        if data == "Journal":
+            dlc = Journal()
+            dlc.exec_()
+        if data == "Proceeding":
+            dlc = Proceeding()
+            dlc.exec_()
+        if data == "InProceeding":
+            dlc = InProceeding()
+            dlc.exec_()
+        if data == "MasterThesis":
+            dlc = MasterThesis()
+            dlc.exec_()
+        if data == "PhdThesis":
+            dlc = PhdThesis()
+            dlc.exec_()
+        if data == "Unpublished":
+            dlc = Unpublished()
+            dlc.exec_()
+        if data == "Misc":
+            dlc = Misc()
+            dlc.exec_()
+
+
+class Article(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(Article, self).__init__(*args, **kwargs)
+
+        self.setWindowTitle("Article")
+        self.setFixedWidth(400)
+        self.setFixedHeight(400)
+
+        self.createButton = QPushButton("Create")
+
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
+        self.line5 = QLineEdit()
+        self.line6 = QLineEdit()
+
+        self.text1 = QLabel("Author:")
+        self.text2 = QLabel("BibTeXKey:")
+        self.text3 = QLabel("Title:")
+        self.text4 = QLabel("Year:")
+        self.text5 = QLabel("ID:")
+        self.text6 = QLabel("Journal:")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+        layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+        layout.addWidget(self.text5)
+        layout.addWidget(self.line5)
+        layout.addWidget(self.text6)
+        layout.addWidget(self.line6)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+        author = self.line1.text()
+        bibtexkey = self.line2.text()
+        title = self.line3.text()
+        year = self.line4.text()
+        ID = self.line5.text()
+        journal = self.line6.text()
+
+        newfile = open(str(bibtexkey) + ".bib", "w")
+        newfile.write(
+            "@" + "article" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
+                year) + "\nTitle=" + title + "\n journal=" + journal + "\n ID=" + str(ID) + "\n}")
+
+        newfile.close()
+
+
+class Book(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(Book, self).__init__(*args, **kwargs)
+        self.setWindowTitle("Book")
+        self.setFixedWidth(400)
+        self.setFixedHeight(400)
+
+        self.createButton = QPushButton("Create")
+
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
+        self.line5 = QLineEdit()
+        self.line6 = QLineEdit()
+
+        self.text1 = QLabel("Author:")
+        self.text2 = QLabel("BibTeXKey:")
+        self.text3 = QLabel("Title:")
+        self.text4 = QLabel("Year:")
+        self.text5 = QLabel("ID:")
+        self.text6 = QLabel("Publisher:")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+        layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+        layout.addWidget(self.text5)
+        layout.addWidget(self.line5)
+        layout.addWidget(self.text6)
+        layout.addWidget(self.line6)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+        author = self.line1.text()
+        bibtexkey = self.line2.text()
+        title = self.line3.text()
+        year = self.line4.text()
+        ID = self.line5.text()
+        publisher = self.line6.text()
+
+        newfile = open(str(bibtexkey) + ".bib", "w")
+        newfile.write(
+            "@" + "book" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
+                year) + "\nTitle=" + title + "\n publisher=" + publisher + "\n ID=" + str(ID) + "\n}")
+
+        newfile.close()
+
+
+class Journal(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(Journal, self).__init__(*args, **kwargs)
+        self.setWindowTitle("Journal")
+        self.setFixedWidth(400)
+        self.setFixedHeight(400)
+
+        self.createButton = QPushButton("Create")
+
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
+        self.line5 = QLineEdit()
+
+        self.text1 = QLabel("Author:")
+        self.text2 = QLabel("BibTeXKey:")
+        self.text3 = QLabel("Title:")
+        self.text4 = QLabel("Year:")
+        self.text5 = QLabel("ID:")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+        layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+        layout.addWidget(self.text5)
+        layout.addWidget(self.line5)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+        author = self.line1.text()
+        bibtexkey = self.line2.text()
+        title = self.line3.text()
+        year = self.line4.text()
+        ID = self.line5.text()
+
+        newfile = open(str(bibtexkey) + ".bib", "w")
+        newfile.write(
+            "@" + "journal" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
+                year) + "\nTitle=" + title + "\n ID=" + str(ID) + "\n}")
+
+        newfile.close()
+
+
+class Proceeding(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(Proceeding, self).__init__(*args, **kwargs)
+        self.setWindowTitle("Proceeeding")
+        self.setFixedWidth(400)
+        self.setFixedHeight(200)
+
+        self.createButton = QPushButton("Create")
+
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+
+        self.text1 = QLabel("Title:")
+        self.text2 = QLabel("Year:")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+        title = self.line1.text()
+        year = self.line2.text()
+
+        newfile = open("Proceeding.bib", "w")
+        newfile.write(
+            "@" + "proceeding" + "{" "\nYear=" + str(year) + "\nTitle=" + title + "\n}")
+
+        newfile.close()
+
+
+class InProceeding(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(InProceeding, self).__init__(*args, **kwargs)
+        self.setWindowTitle("InProceeding")
+        self.setFixedWidth(400)
+        self.setFixedHeight(400)
+
+        self.createButton = QPushButton("Create")
+
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
+        self.line5 = QLineEdit()
+        self.line6 = QLineEdit()
+
+        self.text1 = QLabel("Author:")
+        self.text2 = QLabel("BibTeXKey:")
+        self.text3 = QLabel("Title:")
+        self.text4 = QLabel("Year:")
+        self.text5 = QLabel("ID:")
+        self.text6 = QLabel("Book Title:")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+        layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+        layout.addWidget(self.text5)
+        layout.addWidget(self.line5)
+        layout.addWidget(self.text6)
+        layout.addWidget(self.line6)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+        author = self.line1.text()
+        bibtexkey = self.line2.text()
+        title = self.line3.text()
+        year = self.line4.text()
+        ID = self.line5.text()
+        booktitle = self.line6.text()
+
+        newfile = open(str(bibtexkey) + ".bib", "w")
+        newfile.write(
+            "@" + "inproceeding" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
+                year) + "\nTitle=" + title + "\n book title=" + booktitle + "\n ID=" + str(ID) + "\n}")
+
+        newfile.close()
+
+
+class MasterThesis(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(MasterThesis, self).__init__(*args, **kwargs)
+        self.setWindowTitle("MasterThesis")
+        self.setFixedWidth(400)
+        self.setFixedHeight(400)
+
+        self.createButton = QPushButton("Create")
+
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
+        self.line5 = QLineEdit()
+        self.line6 = QLineEdit()
+
+        self.text1 = QLabel("Author:")
+        self.text2 = QLabel("BibTeXKey:")
+        self.text3 = QLabel("Title:")
+        self.text4 = QLabel("Year:")
+        self.text5 = QLabel("ID:")
+        self.text6 = QLabel("School:")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+        layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+        layout.addWidget(self.text5)
+        layout.addWidget(self.line5)
+        layout.addWidget(self.text6)
+        layout.addWidget(self.line6)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+        author = self.line1.text()
+        bibtexkey = self.line2.text()
+        title = self.line3.text()
+        year = self.line4.text()
+        ID = self.line5.text()
+        school = self.line6.text()
+
+        newfile = open(str(bibtexkey) + ".bib", "w")
+        newfile.write(
+            "@" + "masterthesis" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
+                year) + "\nTitle=" + title + "\n school=" + school + "\n ID=" + str(ID) + "\n}")
+
+        newfile.close()
+
+
+class PhdThesis(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(PhdThesis, self).__init__(*args, **kwargs)
+        self.setWindowTitle("MasterThesis")
+        self.setFixedWidth(400)
+        self.setFixedHeight(400)
+
+        self.createButton = QPushButton("Create")
+
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
+        self.line5 = QLineEdit()
+        self.line6 = QLineEdit()
+
+        self.text1 = QLabel("Author:")
+        self.text2 = QLabel("BibTeXKey:")
+        self.text3 = QLabel("Title:")
+        self.text4 = QLabel("Year:")
+        self.text5 = QLabel("ID:")
+        self.text6 = QLabel("School:")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+        layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+        layout.addWidget(self.text5)
+        layout.addWidget(self.line5)
+        layout.addWidget(self.text6)
+        layout.addWidget(self.line6)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+        author = self.line1.text()
+        bibtexkey = self.line2.text()
+        title = self.line3.text()
+        year = self.line4.text()
+        ID = self.line5.text()
+        school = self.line6.text()
+
+        newfile = open(str(bibtexkey) + ".bib", "w")
+        newfile.write(
+            "@" + "phdthesis" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
+                year) + "\nTitle=" + title + "\n school=" + school + "\n ID=" + str(ID) + "\n}")
+
+        newfile.close()
+
+
+class Unpublished(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(Unpublished, self).__init__(*args, **kwargs)
+        self.setWindowTitle("Unpublished")
+        self.setFixedWidth(400)
+        self.setFixedHeight(250)
+
+        self.createButton = QPushButton("Create")
+
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+
+        self.text1 = QLabel("Author:")
+        self.text2 = QLabel("Title:")
+        self.text3 = QLabel("Note:")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+        layout.addWidget(self.line3)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+        author = self.line1.text()
+        title = self.line2.text()
+        note = self.line3.text()
+
+        newfile = open("Unpublished.bib", "w")
+        newfile.write(
+            "@" + "unpublished" + "{," + "\nAuthor=" + author + "\nTitle=" + title + "\n note=" + note + "\n}")
+
+        newfile.close()
+
+
+class Misc(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(Misc, self).__init__(*args, **kwargs)
+        self.setWindowTitle("Misc")
+        self.setFixedWidth(250)
+        self.setFixedHeight(100)
+
+        self.createButton = QPushButton("Create")
+
+        self.text1 = QLabel("Click create for creating a misc file")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+
+
+        newfile = open("misc.bib", "w")
+        newfile.write(
+            "@" + "misc" + "{" "\n}")
+
+        newfile.close()
 
 class SearchDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(SearchDialog, self).__init__(*args, **kwargs)
-        #Pelinsu Arslan Task
-        #Search code will be here
+        # Pelinsu Arslan Task
+        # Search code will be here
 
 
 app = QApplication(sys.argv)
