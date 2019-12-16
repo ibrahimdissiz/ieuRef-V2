@@ -10,16 +10,47 @@ class SearchDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(SearchDialog, self).__init__(*args, **kwargs)
 
-        self.setWindowTitle("Search")
-        self.setFixedWidth(300)
-        self.setFixedHeight(100)
-
+        self.setWindowsTitle("Search")
+        self.setFixedWidht(600)
+        self.setFixedHeight(300)
         self.createButton = QPushButton("Search")
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
 
 
+        self.text1 = QLabel("Author")
+        self.text2 = QLabel("Type:")
+        self.text3 = QLabel("Title")
+        self.text4 = QLabel("Year")
 
-        layout = QVBoxLayout()
+
+        layout = QFormLayout()
+        layout.addWidget(self.boxlabel)
+
+        self.setLayout(layout)
+
         layout.addWidget(self.text1)
+
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+
+        layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+
+        self.searchButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+        def btn_clk(self):
+            author = self.line1.text()
+            type= self.line2.text()
+            title = self.line3.text()
+            year = self.line4.text()
+            newfile = open(str())
 
         class Window(QtWidgets.QWidget):
             def __init__(self, rows, columns):
