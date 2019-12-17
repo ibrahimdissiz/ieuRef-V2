@@ -153,10 +153,7 @@ class MainWindow(QMainWindow):
     def createAuthorIdentity(self):
         dlg = CreateAuthorIdentityDialog()
         dlg.exec_()
-        #self.IdentityDialog = QtWidgets.QDialog()
-        #ui = CreateAuthorIdentityDialog()
-        #ui.setupUi(self.IdentityDialog)
-        #self.IdentityDialog.show()
+
 
 class CreateDialog(QDialog):
     def __init__(self, *args, **kwargs):
@@ -736,7 +733,8 @@ class CreateAuthorIdentityDialog(QDialog):
 
     # Saves the current status of the table widget into a csv file
     def saveAuthorIdentityScreen(self):
-        with open('authorIdentityData.csv', 'w') as stream:
+        # Supports Turkish special characters with UTF-8 encoding
+        with open('authorIdentityData.csv', 'w', encoding='UTF-8', newline='') as stream:
             writer = csv.writer(stream, lineterminator='\n')
             for row in range(self.tableWidget.rowCount()):
                 rowdata = []
@@ -754,9 +752,15 @@ class CreateAuthorIdentityDialog(QDialog):
         msg = QMessageBox()
         QMessageBox.about(msg, "Status", "SAVED")
 
+        # Gets author identity data from csv file and puts the contents into a list
+        with open('authorIdentityData.csv', 'r', encoding='UTF-8', newline='') as csv_file:
+            authorIdentityData = list(csv.reader(csv_file))
+        print(authorIdentityData)
+
     # Imports author identity data from the csv file into the table widget
     def loadAuthorIdentityData(self):
-        with open('authorIdentityData.csv', 'r') as csv_file:
+        # Support Turkish special characters with UTF-8 encoding
+        with open('authorIdentityData.csv', 'r', encoding='UTF-8', newline='') as csv_file:
             self.tableWidget.setRowCount(0)
             self.tableWidget.setColumnCount(2)
             my_file = csv.reader(csv_file, delimiter=',', quotechar='|')
