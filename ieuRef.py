@@ -10,6 +10,9 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QTableWidgetItem, QMessageBox
 import csv
 
+from bibtexparser.bparser import BibTexParser
+
+
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -19,13 +22,16 @@ class MainWindow(QMainWindow):
         help_menu = self.menuBar().addMenu("&About")
         self.setWindowTitle("IeuRef")
         self.setMinimumSize(1000, 800)
-
+        MainWindow.data = []
         self.tableWidget = QTableWidget()
         self.setCentralWidget(self.tableWidget)
         self.tableWidget.setAlternatingRowColors(True)
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setColumnWidth(0, 300)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
+        self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.tableWidget.setSortingEnabled(True)
+        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget.horizontalHeader().setSortIndicatorShown(False)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
         self.tableWidget.verticalHeader().setVisible(False)
@@ -52,6 +58,10 @@ class MainWindow(QMainWindow):
         searchBibtex_action.triggered.connect(self.search)
         file_menu.addAction(searchBibtex_action)
 
+        filterBibtex_action = QAction(QIcon("icon/filterBibtex.png"), "Filter BibTeX ", self)
+        filterBibtex_action.triggered.connect(self.filterBibtex)
+        file_menu.addAction(filterBibtex_action)
+
         # Create Author Identity file menu button
         createAuthorIdentityBibtex_action = QAction(QIcon("icon/identity.png"), "Create Author Identity", self)
         createAuthorIdentityBibtex_action.triggered.connect(self.createAuthorIdentity)
@@ -72,50 +82,35 @@ class MainWindow(QMainWindow):
         btn_searchBibtex_action.setStatusTip('Search')
         toolbar.addAction(btn_searchBibtex_action)
 
+        btn_filterBibtex_action = QAction(QIcon("icon/filterBibtex.png"), "Filter BibTeX ", self)
+        btn_filterBibtex_action.triggered.connect(self.filterBibtex)
+        btn_filterBibtex_action.setStatusTip('Filter BibTeX')
+        toolbar.addAction(btn_filterBibtex_action)
+
         # Create Author Identity button on the main screen with its icon
         btn_createAuthorIdentityBibtex_action = QAction(QIcon("icon/identity.png"), "Create Author Identity", self)
         btn_createAuthorIdentityBibtex_action.triggered.connect(self.createAuthorIdentity)
         btn_createAuthorIdentityBibtex_action.setStatusTip('Create Author Identity')
         toolbar.addAction(btn_createAuthorIdentityBibtex_action)
 
-    def loaddata(self, author, title, year, type1):
-        # Dummy data for searching
-        # self.tableWidget.setRowCount(5)
-        # self.tableWidget.setItem(0, 0, QTableWidgetItem("1"))
-        # self.tableWidget.setItem(0, 1, QTableWidgetItem("Cai, Hongyun and Zheng, Vincent W. and Zhu, Fanwei and Chang, Kevin Chen-Chuan and Huang, Zi"))
-        # self.tableWidget.setItem(0, 2, QTableWidgetItem("2017"))
-        # self.tableWidget.setItem(0, 3, QTableWidgetItem("article"))
-        # self.tableWidget.setItem(0, 4, QTableWidgetItem("From Community Detection to Community Profiling"))
-        #
-        # self.tableWidget.setItem(1, 0, QTableWidgetItem("2"))
-        # self.tableWidget.setItem(1, 1, QTableWidgetItem("Jantz, Michael R. and Robinson, Forrest J. and Kulkarni, Prasad A."))
-        # self.tableWidget.setItem(1, 2, QTableWidgetItem("2016"))
-        # self.tableWidget.setItem(1, 3, QTableWidgetItem("article"))
-        # self.tableWidget.setItem(1, 4, QTableWidgetItem("Impact of Intrinsic Profiling Limitations on Effectiveness of Adaptive Optimizations"))
-        #
-        # self.tableWidget.setItem(2, 0, QTableWidgetItem("3"))
-        # self.tableWidget.setItem(2, 1, QTableWidgetItem("Sharma, Sanket S. and De Choudhury, Munmun"))
-        # self.tableWidget.setItem(2, 2, QTableWidgetItem("2015"))
-        # self.tableWidget.setItem(2, 3, QTableWidgetItem("inproceedings"))
-        # self.tableWidget.setItem(2, 4, QTableWidgetItem("Measuring and Characterizing Nutritional Information of Food and Ingestion Content in Instagram"))
-        #
-        # self.tableWidget.setItem(3, 0, QTableWidgetItem("4"))
-        # self.tableWidget.setItem(3, 1, QTableWidgetItem("Zhan, Ming and Tu, Ruibo and Yu, Qin"))
-        # self.tableWidget.setItem(3, 2, QTableWidgetItem("2018"))
-        # self.tableWidget.setItem(3, 3, QTableWidgetItem("inproceedings"))
-        # self.tableWidget.setItem(3, 4, QTableWidgetItem("Understanding Readers: Conducting Sentiment Analysis of Instagram Captions"))
-        #
-        # self.tableWidget.setItem(4, 0, QTableWidgetItem("5"))
-        # self.tableWidget.setItem(4, 1, QTableWidgetItem("Schlauch, Wolfgang E. and Zweig, Katharina A. and Theory, Graph and Analysis, Network"))
-        # self.tableWidget.setItem(4, 2, QTableWidgetItem("2015"))
-        # self.tableWidget.setItem(4, 3, QTableWidgetItem("inproceedings"))
-        # self.tableWidget.setItem(4, 4, QTableWidgetItem("Influence of the Null-Model on Motif Detection"))
+    def loaddata(self, author, year, type1, title):
+        newData = [(author, year, type1, title)]
+        entry = MainWindow.data
+        entry.append((author, year, type1, title))
+        print("------------------")
+        print(entry)
+        self.printData(newData)
 
-        self.tableWidget.insertRow(0)
-        self.tableWidget.setItem(0, 0, QTableWidgetItem(author))
-        self.tableWidget.setItem(0, 1, QTableWidgetItem(title))
-        self.tableWidget.setItem(0, 2, QTableWidgetItem(year))
-        self.tableWidget.setItem(0, 3, QTableWidgetItem(type1))
+    def printData(self, data):
+        numrows = len(data)  # 6 rows in your example
+        numcols = len(data[0])
+        # Printing data to the QTableWidget
+        for row in range(numrows):
+            print(numrows)
+            self.tableWidget.insertRow(row)
+            for column in range(numcols):
+                print(column)
+                self.tableWidget.setItem(row, column, QTableWidgetItem((data[row][column])))
 
     def createBibtex(self):
         dlg = CreateDialog()
@@ -123,6 +118,14 @@ class MainWindow(QMainWindow):
 
     def search(self):
         dlg = SearchDialog()
+        dlg.exec_()
+
+    def filterBibtex(self):
+        dlg = FilterDialog()
+        dlg.exec_()
+
+    def createAuthorIdentity(self):
+        dlg = CreateAuthorIdentityDialog()
         dlg.exec_()
 
     def selectBibtex(self):
@@ -133,26 +136,34 @@ class MainWindow(QMainWindow):
         with open(bibtexFile) as bibtex:
 
             try:
+                parser = BibTexParser(common_strings=False)
+                parser.ignore_nonstandard_types = False
+                parser.homogenise_fields = False
                 bibtex_database = bibtexparser.load(bibtex)
                 keyys = bibtex_database.entries
-                print(keyys[0].keys())
-                author = bibtex_database.entries[0]["author"]  # x yerine istenileni yaz ("title") mesela
-                year = bibtex_database.entries[0]["year"]
-                title = bibtex_database.entries[0]["title"]
-                type1 = bibtex_database.entries[0]["ENTRYTYPE"]
-                print(author)
-                print(year)
-                print(title)
-                print(type1)
-                self.loaddata(author, year, type1, title)
+                countEntry = len(keyys)
+                # bibDict = {
+                #     "author": bibtex_database.entries[0]["author"],
+                #     "year": bibtex_database.entries[0]["year"]
+                # }
+                # print('______')
+                # print(bibDict["author"])
+                i = 0
+                while i < countEntry:
+                    author = keyys[i]["author"]  # x yerine istenileni yaz ("title") mesela
+                    year = keyys[i]["year"]
+                    title = keyys[i]["title"]
+                    type1 = keyys[i]["ENTRYTYPE"]
+                    self.loaddata(author, year, type1, title)
+                    print(author)
+                    print(year)
+                    print(title)
+                    print(type1)
+                    i += 1
 
             except Exception:
                 print(format(Exception))
                 QMessageBox.warning(QMessageBox(), 'Error', 'Could not load Bibtex file.')
-
-    def createAuthorIdentity(self):
-        dlg = CreateAuthorIdentityDialog()
-        dlg.exec_()
 
 
 class CreateDialog(QDialog):
@@ -650,13 +661,81 @@ class Misc(QDialog):
 
         newfile.close()
 
+class FilterDialog(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(FilterDialog, self).__init__(*args, **kwargs)
+
+        self.QBtn = QPushButton()
+        self.QBtn.setText("Search")
+
+        self.setWindowTitle("Filter")
+        self.setFixedWidth(300)
+        self.setFixedHeight(300)
+
+        self.QBtn.clicked.connect(self.btn_clk)
+
+        layout = QVBoxLayout()
+
+        self.index1input = QComboBox()
+        self.index1input.addItem("Author")
+        self.index1input.addItem("type")
+
+        layout.addWidget(self.index1input)
+
+        self.index1input = QLineEdit()
+        self.index1input.setPlaceholderText("index")
+        layout.addWidget(self.index1input)
+
+        self.index2input = QComboBox()
+        self.index2input.addItem("Author")
+        self.index2input.addItem("type")
+
+        layout.addWidget(self.index2input)
+
+        self.index2input = QLineEdit()
+        self.index2input.setPlaceholderText("index")
+        layout.addWidget(self.index2input)
+
+        self.index3input = QComboBox()
+        self.index3input.addItem("Author")
+        self.index3input.addItem("type")
+
+        layout.addWidget(self.index3input)
+
+        self.index3input = QLineEdit()
+        self.index3input.setPlaceholderText("index")
+        layout.addWidget(self.index3input)
+
+        self.index4input = QLineEdit()
+        self.index4input.setPlaceholderText("Year From")
+        layout.addWidget(self.index4input)
+
+        self.index5input = QLineEdit()
+        self.index5input.setPlaceholderText("Year To")
+        layout.addWidget(self.index5input)
+
+
+
+        layout.addWidget(self.QBtn)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+
+        index1 = ""
+        index1label = ""
+        index2 = ""
+        index2label = ""
+        index3 = ""
+        index3label = ""
+        index4 = ""
+        index5 = ""
+
 class SearchDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(SearchDialog, self).__init__(*args, **kwargs)
         # Pelinsu Arslan Task
         # Search code will be here
 
-# Create Author Identity Dialog Class is implemented here
 class CreateAuthorIdentityDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(CreateAuthorIdentityDialog, self).__init__(*args, **kwargs)
@@ -777,4 +856,5 @@ app = QApplication(sys.argv)
 if (QDialog.Accepted == True):
     window = MainWindow()
     window.show()
+
 sys.exit(app.exec_())
