@@ -58,6 +58,10 @@ class MainWindow(QMainWindow):
         searchBibtex_action.triggered.connect(self.search)
         file_menu.addAction(searchBibtex_action)
 
+        deleteAllBibtex_action = QAction(QIcon("icon/delete.png"), "Delete All", self)
+        deleteAllBibtex_action.triggered.connect(self.deleteAllBibtex)
+        file_menu.addAction(searchBibtex_action)
+
         filterBibtex_action = QAction(QIcon("icon/filterBibtex.png"), "Filter BibTeX ", self)
         filterBibtex_action.triggered.connect(self.filterBibtex)
         file_menu.addAction(filterBibtex_action)
@@ -93,24 +97,40 @@ class MainWindow(QMainWindow):
         btn_createAuthorIdentityBibtex_action.setStatusTip('Create Author Identity')
         toolbar.addAction(btn_createAuthorIdentityBibtex_action)
 
-    def loaddata(self, author, year, type1, title):
-        newData = [(author, year, type1, title)]
-        entry = MainWindow.data
-        entry.append((author, year, type1, title))
-        print("------------------")
-        print(entry)
-        self.printData(newData)
+
+        btn_deleteAllBibtex_action = QAction(QIcon("icon/delete.png"), "Delete All", self)
+        btn_deleteAllBibtex_action.triggered.connect(self.deleteAllBibtex)
+        btn_deleteAllBibtex_action.setStatusTip('Delete All')
+        toolbar.addAction(btn_deleteAllBibtex_action)
+
+    def loaddata(self, keyys):
+        MainWindow.data = MainWindow.data + keyys   # append(entry)
+        # newData = [(author, year, type1, title)]
+        # entry = MainWindow.data
+        # entry.append((author, year, type1, title))
+        # print("------------------")
+        # print(entry)
+        self.printData(keyys)
 
     def printData(self, data):
-        numrows = len(data)  # 6 rows in your example
-        numcols = len(data[0])
+        # numrows = len(data)  # 6 rows in your example
+        # numcols = len(data[0])
         # Printing data to the QTableWidget
-        for row in range(numrows):
-            print(numrows)
+        row = self.tableWidget.rowCount()
+        for item in data:
             self.tableWidget.insertRow(row)
-            for column in range(numcols):
-                print(column)
-                self.tableWidget.setItem(row, column, QTableWidgetItem((data[row][column])))
+            self.tableWidget.setItem(row, 0, QTableWidgetItem(item["author"]))
+            self.tableWidget.setItem(row, 1, QTableWidgetItem(item["year"]))
+            self.tableWidget.setItem(row, 2, QTableWidgetItem(item["ENTRYTYPE"]))
+            self.tableWidget.setItem(row, 3, QTableWidgetItem(item["title"]))
+            row = row + 1
+        # for row in range(numrows):
+        #     print(numrows)
+        #     self.tableWidget.insertRow(row)
+        #     for column in range(numcols):
+        #         print(column)
+        #         self.tableWidget.setItem(row, column, QTableWidgetItem((data[row][column])))
+
 
     def createBibtex(self):
         dlg = CreateDialog()
@@ -118,11 +138,21 @@ class MainWindow(QMainWindow):
 
     def search(self):
         dlg = SearchDialog()
-        dlg.exec_()
+        # dlg.exec_()
+        # if dlg.accepted():
+        s = dlg.searchString
+        for item in MainWindow.data:
+            for k, v in item.items():
+                if s in v:
+                    print("found: " + v)
 
     def filterBibtex(self):
         dlg = FilterDialog()
         dlg.exec_()
+
+    def deleteAllBibtex(self):
+        self.MainWindow.data.clear()
+        self.printData(MainWindow.data)
 
     def createAuthorIdentity(self):
         dlg = CreateAuthorIdentityDialog()
@@ -132,39 +162,23 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         bibtexFile, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
                                                     "BibTeX Files (*.bib)", options=options)
+        if(bibtexFile):
+            with open(bibtexFile) as bibtex:
 
-        with open(bibtexFile) as bibtex:
+                try:
+                    parser = BibTexParser(common_strings=False)
+                    parser.ignore_nonstandard_types = False
+                    parser.homogenise_fields = False
+                    bibtex_database = bibtexparser.load(bibtex)
+                    keyys = bibtex_database.entries
+                    countEntry = len(keyys)
+                    self.loaddata(keyys)
 
-            try:
-                parser = BibTexParser(common_strings=False)
-                parser.ignore_nonstandard_types = False
-                parser.homogenise_fields = False
-                bibtex_database = bibtexparser.load(bibtex)
-                keyys = bibtex_database.entries
-                countEntry = len(keyys)
-                # bibDict = {
-                #     "author": bibtex_database.entries[0]["author"],
-                #     "year": bibtex_database.entries[0]["year"]
-                # }
-                # print('______')
-                # print(bibDict["author"])
-                i = 0
-                while i < countEntry:
-                    author = keyys[i]["author"]  # x yerine istenileni yaz ("title") mesela
-                    year = keyys[i]["year"]
-                    title = keyys[i]["title"]
-                    type1 = keyys[i]["ENTRYTYPE"]
-                    self.loaddata(author, year, type1, title)
-                    print(author)
-                    print(year)
-                    print(title)
-                    print(type1)
-                    i += 1
-
-            except Exception:
-                print(format(Exception))
-                QMessageBox.warning(QMessageBox(), 'Error', 'Could not load Bibtex file.')
-
+                except Exception:
+                    print(format(Exception))
+                    QMessageBox.warning(QMessageBox(), 'Error', 'Could not load Bibtex file.')
+        else:
+            return
 
 class CreateDialog(QDialog):
     def __init__(self, *args, **kwargs):
@@ -735,6 +749,8 @@ class SearchDialog(QDialog):
         super(SearchDialog, self).__init__(*args, **kwargs)
         # Pelinsu Arslan Task
         # Search code will be here
+        self.searchString = "Shi"
+
 
 class CreateAuthorIdentityDialog(QDialog):
     def __init__(self, *args, **kwargs):
