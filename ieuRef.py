@@ -206,6 +206,7 @@ class CreateDialog(QDialog):
         self.typeinput.addItem("Unpublished")
         self.typeinput.addItem("Misc")
         self.typeinput.activated[str].connect(self.selected)
+        self.typeinput.activated.connect(self.close)
 
         layout.addWidget(self.boxlabel)
         layout.addWidget(self.typeinput)
@@ -280,6 +281,7 @@ class Article(QDialog):
         layout.addWidget(self.line6)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
@@ -336,6 +338,7 @@ class Book(QDialog):
         layout.addWidget(self.line6)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
@@ -388,6 +391,7 @@ class Journal(QDialog):
         layout.addWidget(self.line5)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
@@ -427,6 +431,7 @@ class Proceeding(QDialog):
         layout.addWidget(self.line2)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
@@ -478,6 +483,7 @@ class InProceeding(QDialog):
         layout.addWidget(self.line6)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
@@ -534,6 +540,7 @@ class MasterThesis(QDialog):
         layout.addWidget(self.line6)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
@@ -590,6 +597,7 @@ class PhdThesis(QDialog):
         layout.addWidget(self.line6)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
@@ -634,6 +642,7 @@ class Unpublished(QDialog):
         layout.addWidget(self.line3)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
@@ -663,6 +672,7 @@ class Misc(QDialog):
         layout.addWidget(self.text1)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
