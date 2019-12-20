@@ -678,71 +678,206 @@ class Misc(QDialog):
 class FilterDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(FilterDialog, self).__init__(*args, **kwargs)
+        self.setupUi(self)
+        self.show()
 
-        self.QBtn = QPushButton()
-        self.QBtn.setText("Search")
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(448, 459)
+        self.pushButtonsearch = QtWidgets.QPushButton(Dialog)
+        self.pushButtonsearch.setGeometry(QtCore.QRect(310, 400, 75, 23))
+        self.pushButtonsearch.setObjectName("pushButtonsearch")
+        self.layoutWidget = QtWidgets.QWidget(Dialog)
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 120, 401, 194))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.tableWidgetauthor = QtWidgets.QTableWidget(self.layoutWidget)
+        self.tableWidgetauthor.setObjectName("tableWidgetauthor")
+        self.tableWidgetauthor.setColumnCount(1)
+        self.tableWidgetauthor.setRowCount(0)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidgetauthor.setHorizontalHeaderItem(0, item)
+        self.horizontalLayout.addWidget(self.tableWidgetauthor)
+        self.tableWidgettitle = QtWidgets.QTableWidget(self.layoutWidget)
+        self.tableWidgettitle.setObjectName("tableWidgettitle")
+        self.tableWidgettitle.setColumnCount(1)
+        self.tableWidgettitle.setRowCount(0)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidgettitle.setHorizontalHeaderItem(0, item)
+        self.horizontalLayout.addWidget(self.tableWidgettitle)
+        self.tableWidgettype = QtWidgets.QTableWidget(self.layoutWidget)
+        self.tableWidgettype.setObjectName("tableWidgettype")
+        self.tableWidgettype.setColumnCount(1)
+        self.tableWidgettype.setRowCount(0)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidgettype.setHorizontalHeaderItem(0, item)
+        self.horizontalLayout.addWidget(self.tableWidgettype)
+        self.layoutWidget1 = QtWidgets.QWidget(Dialog)
+        self.layoutWidget1.setGeometry(QtCore.QRect(20, 90, 401, 25))
+        self.layoutWidget1.setObjectName("layoutWidget1")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.layoutWidget1)
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.pushButtonaddauthor = QtWidgets.QPushButton(self.layoutWidget1)
+        self.pushButtonaddauthor.setObjectName("pushButtonaddauthor")
+        self.horizontalLayout_2.addWidget(self.pushButtonaddauthor)
+        self.pushButtonaddtitle = QtWidgets.QPushButton(self.layoutWidget1)
+        self.pushButtonaddtitle.setObjectName("pushButtonaddtitle")
+        self.horizontalLayout_2.addWidget(self.pushButtonaddtitle)
+        self.pushButtonaddtype = QtWidgets.QPushButton(self.layoutWidget1)
+        self.pushButtonaddtype.setObjectName("pushButtonaddtype")
+        self.horizontalLayout_2.addWidget(self.pushButtonaddtype)
+        self.layoutWidget2 = QtWidgets.QWidget(Dialog)
+        self.layoutWidget2.setGeometry(QtCore.QRect(20, 20, 401, 20))
+        self.layoutWidget2.setObjectName("layoutWidget2")
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.layoutWidget2)
+        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.label = QtWidgets.QLabel(self.layoutWidget2)
+        self.label.setObjectName("label")
+        self.horizontalLayout_4.addWidget(self.label)
+        self.label_2 = QtWidgets.QLabel(self.layoutWidget2)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout_4.addWidget(self.label_2)
+        self.label_3 = QtWidgets.QLabel(self.layoutWidget2)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_4.addWidget(self.label_3)
+        self.layoutWidget3 = QtWidgets.QWidget(Dialog)
+        self.layoutWidget3.setGeometry(QtCore.QRect(19, 360, 401, 22))
+        self.layoutWidget3.setObjectName("layoutWidget3")
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.layoutWidget3)
+        self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.label_4 = QtWidgets.QLabel(self.layoutWidget3)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout_5.addWidget(self.label_4)
+        self.lineEdityearto = QtWidgets.QLineEdit(self.layoutWidget3)# year to
+        self.lineEdityearto.setObjectName("lineEdityearto")
+        self.horizontalLayout_5.addWidget(self.lineEdityearto)
+        self.label_5 = QtWidgets.QLabel(self.layoutWidget3)
+        self.label_5.setObjectName("label_5")
+        self.horizontalLayout_5.addWidget(self.label_5)
+        self.lineEditfrom = QtWidgets.QLineEdit(self.layoutWidget3)# year from
+        self.lineEditfrom.setObjectName("lineEditfrom")
+        self.horizontalLayout_5.addWidget(self.lineEditfrom)
 
-        self.setWindowTitle("Filter")
-        self.setFixedWidth(300)
-        self.setFixedHeight(300)
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
 
-        self.QBtn.clicked.connect(self.btn_clk)
+        # function calls for buttons on the screen
+        self.pushButtonaddauthor.clicked.connect(self.addNewRowAuthor)
+        self.pushButtonaddtitle.clicked.connect(self.addNewRowTitle)
+        self.pushButtonaddtype.clicked.connect(self.addNewRowType)
 
-        layout = QVBoxLayout()
-
-        self.index1input = QComboBox()
-        self.index1input.addItem("Author")
-        self.index1input.addItem("type")
-
-        layout.addWidget(self.index1input)
-
-        self.index1input = QLineEdit()
-        self.index1input.setPlaceholderText("index")
-        layout.addWidget(self.index1input)
-
-        self.index2input = QComboBox()
-        self.index2input.addItem("Author")
-        self.index2input.addItem("type")
-
-        layout.addWidget(self.index2input)
-
-        self.index2input = QLineEdit()
-        self.index2input.setPlaceholderText("index")
-        layout.addWidget(self.index2input)
-
-        self.index3input = QComboBox()
-        self.index3input.addItem("Author")
-        self.index3input.addItem("type")
-
-        layout.addWidget(self.index3input)
-
-        self.index3input = QLineEdit()
-        self.index3input.setPlaceholderText("index")
-        layout.addWidget(self.index3input)
-
-        self.index4input = QLineEdit()
-        self.index4input.setPlaceholderText("Year From")
-        layout.addWidget(self.index4input)
-
-        self.index5input = QLineEdit()
-        self.index5input.setPlaceholderText("Year To")
-        layout.addWidget(self.index5input)
+        self.pushButtonsearch.clicked.connect(self.saveAuthortable)
+        self.pushButtonsearch.clicked.connect(self.saveTitletable)
+        self.pushButtonsearch.clicked.connect(self.saveTypetabel)
+        self.pushButtonsearch.clicked.connect(self.saveYear)
 
 
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Filter"))
 
-        layout.addWidget(self.QBtn)
-        self.setLayout(layout)
+        self.pushButtonsearch.setText(_translate("Dialog", "SEARCH"))
+        item = self.tableWidgetauthor.horizontalHeaderItem(0)
+        item.setText(_translate("Dialog", "Author"))
+        item = self.tableWidgettitle.horizontalHeaderItem(0)
+        item.setText(_translate("Dialog", "TITLE"))
+        item = self.tableWidgettype.horizontalHeaderItem(0)
+        item.setText(_translate("Dialog", "TYPE"))
+        self.pushButtonaddauthor.setText(_translate("Dialog", "ADD"))
+        self.pushButtonaddtitle.setText(_translate("Dialog", "ADD"))
+        self.pushButtonaddtype.setText(_translate("Dialog", "ADD"))
+        self.label.setText(_translate("Dialog", "               AUTHOR"))
+        self.label_2.setText(_translate("Dialog", "                TITLE"))
+        self.label_3.setText(_translate("Dialog", "                 TYPE"))
+        self.label_4.setText(_translate("Dialog", "Year to"))
+        self.label_5.setText(_translate("Dialog", "year from"))
 
-    def btn_clk(self):
+    def addNewRowAuthor(self):#add row Author table
+        rowPosition = self.tableWidgetauthor.rowCount()
+        self.tableWidgetauthor.insertRow(rowPosition)
+    def saveAuthortable(self):
+        for row in range(self.tableWidgetauthor.rowCount()):
+            rowdataauthor = []
+            for column in range(self.tableWidgetauthor.columnCount()):
+                item = self.tableWidgetauthor.item(row,column)
+                if item is not None:
 
-        index1 = ""
-        index1label = ""
-        index2 = ""
-        index2label = ""
-        index3 = ""
-        index3label = ""
-        index4 = ""
-        index5 = ""
+                    rowdataauthor.append(item.text())
+                else:
+                    rowdataauthor.append('')
+
+            print(rowdataauthor)#silincek
+
+
+
+    def addNewRowTitle(self):#add row Title table
+        rowPosition= self.tableWidgettitle.rowCount()
+        self.tableWidgettitle.insertRow(rowPosition)
+    def saveTitletable(self):
+        for row in range(self.tableWidgettitle.rowCount()):
+            rowdatatitle = []
+            for column in range(self.tableWidgettitle.columnCount()):
+                item = self.tableWidgettitle.item(row,column)
+                if item is not None:
+
+                    rowdatatitle.append(item.text())
+                else:
+                    rowdatatitle.append('')
+
+            print(rowdatatitle)#silinecek
+
+
+    def addNewRowType(self):#add row Type table
+        rowPosition= self.tableWidgettype.rowCount()
+        self.tableWidgettype.insertRow(rowPosition)
+
+    def saveTypetabel(self):
+        for row in range(self.tableWidgettype.rowCount()):
+            rowdatatype=[]
+            for column in range(self.tableWidgettype.columnCount()):
+                item = self.tableWidgettype.item(row,column)
+                if item is not None:
+
+                    rowdatatype.append(item.text())
+                else:
+                    rowdatatype.append('')
+
+            print(rowdatatype)#silinecek
+
+    def saveYear(self):
+        yeardata = []
+        yearto=self.lineEdityearto.text()
+        yearfrom=self.lineEditfrom.text()
+        print(yearto)
+        print(yearfrom)
+
+        a = int(yearto)
+        b = int(yearfrom)
+
+        if a < b:
+            while a < b:
+                d = a+1
+                yeardata.append(d)
+                a = d
+        else:
+            while b < a:
+                ey = b+1
+                yeardata.append(ey)
+                b = ey
+
+
+
+
+
+
+        print(yeardata)
+
+
 
 class SearchDialog(QDialog):
     def __init__(self, *args, **kwargs):
