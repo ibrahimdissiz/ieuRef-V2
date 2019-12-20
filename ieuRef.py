@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
         createBibtex_action.triggered.connect(self.createBibtex)
         file_menu.addAction(createBibtex_action)
 
-        searchBibtex_action = QAction(QIcon("icon/search.png"), "Search Student", self)
+        searchBibtex_action = QAction(QIcon("icon/search.png"), "Search", self)
         searchBibtex_action.triggered.connect(self.search)
         file_menu.addAction(searchBibtex_action)
 
@@ -140,11 +140,10 @@ class MainWindow(QMainWindow):
         dlg = SearchDialog()
         # dlg.exec_()
         # if dlg.accepted():
-        s = dlg.searchString
-        for item in MainWindow.data:
-            for k, v in item.items():
-                if s in v:
-                    print("found: " + v)
+
+
+        dlg.exec_()
+
 
     def filterBibtex(self):
         dlg = FilterDialog()
@@ -884,7 +883,38 @@ class SearchDialog(QDialog):
         super(SearchDialog, self).__init__(*args, **kwargs)
         # Pelinsu Arslan Task
         # Search code will be here
-        self.searchString = "Shi"
+
+        self.setWindowTitle("Search")
+        self.setFixedWidth(300)
+        self.setFixedHeight(100)
+        layout = QFormLayout()
+
+        self.setWindowTitle("Search")
+        self.setFixedWidth(400)
+        self.setFixedHeight(100)
+        self.searchButton = QPushButton("Search")
+
+        self.line1 = QLineEdit()
+        self.text1 = QLabel("Please enter")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.searchButton)
+        self.searchButton.clicked.connect(self.btn_clk)
+        self.setLayout(layout)
+        self.searchedList = list()
+
+    def btn_clk(self):
+
+        # self.input = self.line1.text()
+        input = self.line1.text()
+
+        item = self.searchedList
+        for item in MainWindow.data:
+            for k, v in item.items():
+                if input in v:
+                    print("found: " + str(item))
 
 
 class CreateAuthorIdentityDialog(QDialog):
