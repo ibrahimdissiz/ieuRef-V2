@@ -104,6 +104,7 @@ class MainWindow(QMainWindow):
 
     def loaddata(self, keyys):
         MainWindow.data = MainWindow.data + keyys  # append(entry)
+        print(MainWindow.data)
         # newData = [(author, year, type1, title)]
         # entry = MainWindow.data
         # entry.append((author, year, type1, title))
@@ -146,8 +147,9 @@ class MainWindow(QMainWindow):
         dlg.exec_()
 
     def deleteAllBibtex(self):
-        self.MainWindow.data.clear()
-        self.printData(MainWindow.data)
+        MainWindow.data.clear()
+        print(MainWindow.data)
+        self.tableWidget.setRowCount(0)
 
     def createAuthorIdentity(self):
         dlg = CreateAuthorIdentityDialog()
@@ -566,6 +568,7 @@ class MasterThesis(QDialog):
         self.setWindowTitle("MasterThesis")
         self.setFixedWidth(400)
         self.setFixedHeight(400)
+
 
         self.createButton = QPushButton("Create")
 
