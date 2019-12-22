@@ -117,8 +117,8 @@ class MainWindow(QMainWindow):
         btn_saveBibtex_action.setStatusTip('Save')
         toolbar.addAction(btn_saveBibtex_action)
 
-        btn_deleteSelected_action = QAction(QIcon("icon/delete.png"), "Delete Selected", self)
-        btn_deleteSelected_action.triggered.connect(self.deleteSelected)
+        btn_deleteSelected_action = QAction(QIcon("icon/delete.png"), "Delete All", self)
+        btn_deleteSelected_action.triggered.connect(self.deleteAllBibtex)
         btn_deleteSelected_action.setStatusTip('Delete All')
         toolbar.addAction(btn_deleteSelected_action)
 
