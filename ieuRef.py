@@ -791,10 +791,18 @@ class Misc(QDialog):
 
 
 class FilterDialog(QDialog):
+    rowdataauthor = []
+    rowdatatitle = []
+    rowdatatype = []
+    yeardata = []
+    filteredlist=[]
+
+
     def __init__(self, *args, **kwargs):
         super(FilterDialog, self).__init__(*args, **kwargs)
         self.setupUi(self)
         self.show()
+
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -890,6 +898,7 @@ class FilterDialog(QDialog):
         self.pushButtonsearch.clicked.connect(self.saveTitletable)
         self.pushButtonsearch.clicked.connect(self.saveTypetabel)
         self.pushButtonsearch.clicked.connect(self.saveYear)
+        self.pushButtonsearch.clicked.connect(self.filtering)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -916,58 +925,60 @@ class FilterDialog(QDialog):
         self.tableWidgetauthor.insertRow(rowPosition)
 
     def saveAuthortable(self):
-        for row in range(self.tableWidgetauthor.rowCount()):
-            rowdataauthor = []
-            for column in range(self.tableWidgetauthor.columnCount()):
-                item = self.tableWidgetauthor.item(row, column)
-                if item is not None:
 
-                    rowdataauthor.append(item.text())
-                else:
-                    rowdataauthor.append('')
 
-            print(rowdataauthor)  # silincek
+        for x in range(self.tableWidgetauthor.rowCount()):
+            item = self.tableWidgetauthor.item(x, 0)
+            if item is not None:
+
+                self.rowdataauthor.append(item.text())
+            else:
+                self.rowdataauthor.append('')
+
+
+
+        #print(rowdataauthor)  # silincek
 
     def addNewRowTitle(self):  # add row Title table
         rowPosition = self.tableWidgettitle.rowCount()
         self.tableWidgettitle.insertRow(rowPosition)
 
     def saveTitletable(self):
-        for row in range(self.tableWidgettitle.rowCount()):
-            rowdatatitle = []
-            for column in range(self.tableWidgettitle.columnCount()):
-                item = self.tableWidgettitle.item(row, column)
-                if item is not None:
 
-                    rowdatatitle.append(item.text())
-                else:
-                    rowdatatitle.append('')
 
-            print(rowdatatitle)  # silinecek
+        for x in range(self.tableWidgettitle.rowCount()):
+            item = self.tableWidgettitle.item(x, 0)
+            if item is not None:
+
+                self.rowdatatitle.append(item.text())
+            else:
+                self.rowdatatitle.append('')
+
+        #print(self.rowdatatitle)  # silinecek
 
     def addNewRowType(self):  # add row Type table
         rowPosition = self.tableWidgettype.rowCount()
         self.tableWidgettype.insertRow(rowPosition)
 
     def saveTypetabel(self):
-        for row in range(self.tableWidgettype.rowCount()):
-            rowdatatype = []
-            for column in range(self.tableWidgettype.columnCount()):
-                item = self.tableWidgettype.item(row, column)
-                if item is not None:
 
-                    rowdatatype.append(item.text())
-                else:
-                    rowdatatype.append('')
 
-            print(rowdatatype)  # silinecek
+        for x in range(self.tableWidgettype.rowCount()):
+            item = self.tableWidgettype.item(x, 0)
+            if item is not None:
+
+                self.rowdatatype.append(item.text())
+            else:
+                self.rowdatatype.append('')
+
+        #print(self.rowdatatype)  # silinecek
 
     def saveYear(self):
-        yeardata = []
+
         yearto = self.lineEdityearto.text()
         yearfrom = self.lineEditfrom.text()
-        print(yearto)
-        print(yearfrom)
+        # print(yearto)
+        # print(yearfrom)
 
         a = int(yearto)
         b = int(yearfrom)
@@ -975,15 +986,68 @@ class FilterDialog(QDialog):
         if a < b:
             while a < b:
                 d = a + 1
-                yeardata.append(d)
+                self.yeardata.append(d)
                 a = d
+
         else:
             while b < a:
                 ey = b + 1
-                yeardata.append(ey)
+                self.yeardata.append(ey)
                 b = ey
 
-        print(yeardata)
+
+        #print(self.yeardata)
+
+    def filtering(self):
+
+        item=self.filteredlist
+        # searching author
+        while bool(self.rowdataauthor):
+            for a in self.rowdataauthor:
+                input=a
+                for item in MainWindow.data:
+                    for b in item.items():
+                        if input in b:
+                            self.filteredlist.append(item)
+                            #print(self.filteredlist)
+            break
+          # searching title
+
+        while bool(self.rowdatatitle):
+            for c in self.rowdatatitle:
+                input=c
+                for item in MainWindow.data:
+                    for d in item.items():
+                        if input in d:
+                            self.filteredlist.append(item)
+                            #print(self.filteredlist)
+            break
+         #searching type
+        while bool(self.rowdatatype):
+            for e in self.rowdatatype:
+                input=e
+                for item in MainWindow.data:
+                    for f in item.items():
+                        if input in f:
+                            self.filteredlist.append(item)
+                            #print(self.filteredlist)
+            break
+           # searching year
+        while bool(self.yeardata):
+            for g in self.yeardata:
+                input=g
+                for item in MainWindow.data:
+                    for h in item.items():
+                        if input in h:
+                            self.filteredlist.append(item)
+                            #print(self.filteredlist)
+            break
+
+        print(self.filteredlist)
+
+
+
+
 
 
 class SearchDialog(QDialog):
