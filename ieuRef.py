@@ -1,4 +1,6 @@
 import sys
+from bibtexparser.bwriter import BibTexWriter
+from bibtexparser.bibdatabase import BibDatabase
 
 import bibtexparser
 from PyQt5 import QtWidgets, QtGui
@@ -204,12 +206,44 @@ class MainWindow(QMainWindow):
             return
 
     def saveBibtex(self):
+
         global data
-        newfile = open("Unpublished.bib", "w")
-        for x in data:
-            newfile.write(
-                "@" + data["ENTRYTYPE"])
-            newfile.close()
+        print(data)
+        db = BibDatabase()
+        db.entries = []
+        db.entries = data
+
+        writer = BibTexWriter()
+
+        options = QFileDialog.Options()
+        bibtexFile, _ = QFileDialog.getSaveFileName(self, "Save Bibtex File", "",
+                                                    "BibTeX Files (*.bib)", options=options)
+        with open(bibtexFile, 'w') as bibfile:
+            bibfile.write(writer.write(db))
+
+
+
+        # global data
+        #
+        # for x in data:
+        #
+        #     part_a = "@"+ x["ENTRYTYPE"]+"{"+x["ID"]+",\n"
+        #     print(part_a)
+
+
+        # options = QFileDialog.Options()
+        # bibtexFile, _ = QFileDialog.getSaveFileName(self, "Save Bibtex File", "",
+        #                                              "BibTeX Files (*.bib)", options=options)
+        # bibtexFile = open(data,"w")
+        # bibtexFile.write(data)
+
+
+        # global data
+        # newfile = open("Unpublished.bib", "w")
+        # for x in data:
+        #     newfile.write(
+        #         "@" + data["ENTRYTYPE"])
+        #     newfile.close()
 
 
     def deleteSelected(self):
