@@ -178,9 +178,11 @@ class MainWindow(QMainWindow):
             print("row", row)
 
     def createBibtex(self):
+        searchedList.clear()
         dlg = CreateDialog()
         dlg.exec_()
         global data
+        self.tableWidget.setRowCount(0)
         self.printData()
 
     def search(self):
@@ -206,45 +208,22 @@ class MainWindow(QMainWindow):
             return
 
     def saveBibtex(self):
+            global data
+            print(data)
+            db = BibDatabase()
+            db.entries = []
+            db.entries = data
 
-        global data
-        print(data)
-        db = BibDatabase()
-        db.entries = []
-        db.entries = data
+            writer = BibTexWriter()
 
-        writer = BibTexWriter()
-
-        options = QFileDialog.Options()
-        bibtexFile, _ = QFileDialog.getSaveFileName(self, "Save Bibtex File", "",
-                                                    "BibTeX Files (*.bib)", options=options)
-        with open(bibtexFile, 'w') as bibfile:
-            bibfile.write(writer.write(db))
-
-
-
-        # global data
-        #
-        # for x in data:
-        #
-        #     part_a = "@"+ x["ENTRYTYPE"]+"{"+x["ID"]+",\n"
-        #     print(part_a)
-
-
-        # options = QFileDialog.Options()
-        # bibtexFile, _ = QFileDialog.getSaveFileName(self, "Save Bibtex File", "",
-        #                                              "BibTeX Files (*.bib)", options=options)
-        # bibtexFile = open(data,"w")
-        # bibtexFile.write(data)
-
-
-        # global data
-        # newfile = open("Unpublished.bib", "w")
-        # for x in data:
-        #     newfile.write(
-        #         "@" + data["ENTRYTYPE"])
-        #     newfile.close()
-
+            options = QFileDialog.Options()
+            bibtexFile, _ = QFileDialog.getSaveFileName(self, "Save Bibtex File", "",
+                                                        "BibTeX Files (*.bib)", options=options)
+            if (bibtexFile):
+                with open(bibtexFile, 'w') as bibfile:
+                    bibfile.write(writer.write(db))
+            else:
+                return
 
     def deleteSelected(self):
         print("delete selected")
@@ -256,6 +235,8 @@ class MainWindow(QMainWindow):
         dlg.exec_()
 
     def selectBibtex(self):
+        searchedList.clear()
+        self.tableWidget.setRowCount(0)
         options = QFileDialog.Options()
         bibtexFile, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
                                                     "BibTeX Files (*.bib)", options=options)
@@ -1311,7 +1292,6 @@ class FilterDialog(QDialog):
 
     def saveAuthortable(self):
 
-
         for x in range(self.tableWidgetauthor.rowCount()):
             item = self.tableWidgetauthor.item(x, 0)
             if item is not None:
@@ -1452,6 +1432,7 @@ class SearchDialog(QDialog):
         layout.addWidget(self.line1)
         layout.addWidget(self.searchButton)
         self.searchButton.clicked.connect(self.btn_clk)
+        self.searchButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
