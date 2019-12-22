@@ -65,7 +65,12 @@ class MainWindow(QMainWindow):
         createAuthorIdentityBibtex_action = QAction(QIcon("icon/identity.png"), "Create Author Identity", self)
         createAuthorIdentityBibtex_action.triggered.connect(self.createAuthorIdentity)
         file_menu.addAction(createAuthorIdentityBibtex_action)
-
+        
+        saveBibtex_action = QAction(QIcon("icon/save.png"), "Save BibTeX file", self)
+        saveBibtex_action.triggered.connect(self.saveBibtex)
+        file_menu.addAction(saveBibtex_action)
+   
+        
         deleteAllBibtex_action = QAction(QIcon("icon/delete.png"), "Delete All", self)
         deleteAllBibtex_action.triggered.connect(self.deleteAllBibtex)
         file_menu.addAction(deleteAllBibtex_action)
@@ -95,6 +100,11 @@ class MainWindow(QMainWindow):
         btn_createAuthorIdentityBibtex_action.triggered.connect(self.createAuthorIdentity)
         btn_createAuthorIdentityBibtex_action.setStatusTip('Create Author Identity')
         toolbar.addAction(btn_createAuthorIdentityBibtex_action)
+        
+        btn_saveBibtex_action = QAction(QIcon("icon/save.png"), "Save Bibtex", self)
+        btn_saveBibtex_action.triggered.connect(self.saveBibtex)
+        btn_saveBibtex_action.setStatusTip('Save')
+        toolbar.addAction(btn_saveBibtex_action)
 
         btn_deleteSelected_action = QAction(QIcon("icon/delete.png"), "Delete Selected", self)
         btn_deleteSelected_action.triggered.connect(self.deleteSelected)
@@ -167,6 +177,14 @@ class MainWindow(QMainWindow):
     def createAuthorIdentity(self):
         dlg = CreateAuthorIdentityDialog()
         dlg.exec_()
+        
+    def saveBibtex(self):
+
+        options = QFileDialog.Options()
+        bibtexFile, _ = QFileDialog.getSaveFileName(self, "Save Bibtex", "", "BibTeX Files (*.bib)", options=options)
+
+        bibtexFile = open(bibtexFile,"w")
+        bibtexFile.write("içi boş")    
 
     def selectBibtex(self):
         options = QFileDialog.Options()
