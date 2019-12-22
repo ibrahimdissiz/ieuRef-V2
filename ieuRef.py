@@ -13,6 +13,7 @@ import csv
 from bibtexparser.bparser import BibTexParser
 
 data = []
+
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -29,7 +30,7 @@ class MainWindow(QMainWindow):
         self.tableWidget.setColumnWidth(0, 300)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.tableWidget.setSortingEnabled(True)
+        self.tableWidget.setSortingEnabled(False)
         self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget.horizontalHeader().setSortIndicatorShown(False)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
@@ -53,6 +54,10 @@ class MainWindow(QMainWindow):
         createBibtex_action.triggered.connect(self.createBibtex)
         file_menu.addAction(createBibtex_action)
 
+        saveBibtex_action = QAction(QIcon("icon/save.png"), "Save BibTeX file", self)
+        saveBibtex_action.triggered.connect(self.saveBibtex)
+        file_menu.addAction(saveBibtex_action)
+
         searchBibtex_action = QAction(QIcon("icon/search.png"), "Search", self)
         searchBibtex_action.triggered.connect(self.search)
         file_menu.addAction(searchBibtex_action)
@@ -65,12 +70,7 @@ class MainWindow(QMainWindow):
         createAuthorIdentityBibtex_action = QAction(QIcon("icon/identity.png"), "Create Author Identity", self)
         createAuthorIdentityBibtex_action.triggered.connect(self.createAuthorIdentity)
         file_menu.addAction(createAuthorIdentityBibtex_action)
-        
-        saveBibtex_action = QAction(QIcon("icon/save.png"), "Save BibTeX file", self)
-        saveBibtex_action.triggered.connect(self.saveBibtex)
-        file_menu.addAction(saveBibtex_action)
-   
-        
+
         deleteAllBibtex_action = QAction(QIcon("icon/delete.png"), "Delete All", self)
         deleteAllBibtex_action.triggered.connect(self.deleteAllBibtex)
         file_menu.addAction(deleteAllBibtex_action)
@@ -100,7 +100,7 @@ class MainWindow(QMainWindow):
         btn_createAuthorIdentityBibtex_action.triggered.connect(self.createAuthorIdentity)
         btn_createAuthorIdentityBibtex_action.setStatusTip('Create Author Identity')
         toolbar.addAction(btn_createAuthorIdentityBibtex_action)
-        
+
         btn_saveBibtex_action = QAction(QIcon("icon/save.png"), "Save Bibtex", self)
         btn_saveBibtex_action.triggered.connect(self.saveBibtex)
         btn_saveBibtex_action.setStatusTip('Save')
@@ -110,6 +110,8 @@ class MainWindow(QMainWindow):
         btn_deleteSelected_action.triggered.connect(self.deleteSelected)
         btn_deleteSelected_action.setStatusTip('Delete All')
         toolbar.addAction(btn_deleteSelected_action)
+
+
 
     def loaddata(self, keyys):
         print("Selam")
@@ -127,15 +129,18 @@ class MainWindow(QMainWindow):
         # numrows = len(data)  # 6 rows in your example
         # numcols = len(data[0])
         # Printing data to the QTableWidget
-        row = self.tableWidget.rowCount()
         global data
-        for item in data:
+        row = self.tableWidget.rowCount()
+
+        for i in range(row, len(data)):
+            item = data[i]
             self.tableWidget.insertRow(row)
             self.tableWidget.setItem(row, 0, QTableWidgetItem(item["author"]))
             self.tableWidget.setItem(row, 1, QTableWidgetItem(item["year"]))
             self.tableWidget.setItem(row, 2, QTableWidgetItem(item["ENTRYTYPE"]))
             self.tableWidget.setItem(row, 3, QTableWidgetItem(item["title"]))
             row = row + 1
+            print("row", row)
         # for row in range(numrows):
         #     print(numrows)
         #     self.tableWidget.insertRow(row)
@@ -146,6 +151,8 @@ class MainWindow(QMainWindow):
     def createBibtex(self):
         dlg = CreateDialog()
         dlg.exec_()
+        global data
+        self.printData()
 
     def search(self):
         dlg = SearchDialog()
@@ -167,7 +174,13 @@ class MainWindow(QMainWindow):
         else:
             return
 
+    def saveBibtex(self):
 
+        options = QFileDialog.Options()
+        bibtexFile, _ = QFileDialog.getSaveFileName(self, "Save Bibtex", "", "BibTeX Files (*.bib)", options=options)
+
+        bibtexFile = open(bibtexFile, "w")
+        bibtexFile.write("içi boş")
 
     def deleteSelected(self):
         print("delete selected")
@@ -177,14 +190,6 @@ class MainWindow(QMainWindow):
     def createAuthorIdentity(self):
         dlg = CreateAuthorIdentityDialog()
         dlg.exec_()
-        
-    def saveBibtex(self):
-
-        options = QFileDialog.Options()
-        bibtexFile, _ = QFileDialog.getSaveFileName(self, "Save Bibtex", "", "BibTeX Files (*.bib)", options=options)
-
-        bibtexFile = open(bibtexFile,"w")
-        bibtexFile.write("içi boş")    
 
     def selectBibtex(self):
         options = QFileDialog.Options()
@@ -276,10 +281,10 @@ class CreateDialog(QDialog):
 class Article(QDialog):
     def __init__(self, *args, **kwargs):
         super(Article, self).__init__(*args, **kwargs)
-        createMain = MainWindow
+
         self.setWindowTitle("Article")
-        self.setFixedWidth(400)
-        self.setFixedHeight(400)
+        self.setFixedWidth(450)
+        self.setFixedHeight(500)
 
         self.createButton = QPushButton("Create")
 
@@ -289,13 +294,21 @@ class Article(QDialog):
         self.line4 = QLineEdit()
         self.line5 = QLineEdit()
         self.line6 = QLineEdit()
+        self.line7 = QLineEdit()
+        self.line8 = QLineEdit()
+        self.line9 = QLineEdit()
+        self.line10 = QLineEdit()
 
         self.text1 = QLabel("Author(*):")
-        self.text2 = QLabel("BibTeXKey(*):")
+        self.text2 = QLabel("ID(*):")
         self.text3 = QLabel("Title(*):")
         self.text4 = QLabel("Year:")
-        self.text5 = QLabel("ID:")
-        self.text6 = QLabel("Journal:")
+        self.text5 = QLabel("Journal:")
+        self.text6 = QLabel("Number:")
+        self.text7 = QLabel("Pages:")
+        self.text8 = QLabel("Month:")
+        self.text9 = QLabel("Note:")
+        self.text10 = QLabel("Volume:")
         self.keyText=QLabel("Key values must be filled(*)")
         self.keyText.setStyleSheet('color: red')
 
@@ -313,43 +326,66 @@ class Article(QDialog):
         layout.addWidget(self.line5)
         layout.addWidget(self.text6)
         layout.addWidget(self.line6)
+        layout.addWidget(self.text7)
+        layout.addWidget(self.line7)
+        layout.addWidget(self.text8)
+        layout.addWidget(self.line8)
+        layout.addWidget(self.text9)
+        layout.addWidget(self.line9)
+        layout.addWidget(self.text10)
+        layout.addWidget(self.line10)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
         self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
-        crMain = MainWindow()
         author = self.line1.text()
-        bibtexkey = self.line2.text()
+        ID = self.line2.text()
         title = self.line3.text()
         year = self.line4.text()
-        ID = self.line5.text()
-        journal = self.line6.text()
+        journal = self.line5.text()
+        number = self.line6.text()
+        pages = self.line7.text()
+        month = self.line8.text()
+        note = self.line9.text()
+        volume = self.line10.text()
 
-        if author is "" or title is "" or bibtexkey is "":
+        if author == "" or title == "" or ID == "" or year == "":
             QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
             return
 
         try:
-            ID = int(self.line5.text())
             year = int(self.line4.text())
 
         except ValueError:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Year/ID must be a integer')
+            QMessageBox.warning(QMessageBox(), 'Error', 'Year must be a integer')
             return
 
-        createBib = [{'ID': ID, 'author': author, 'title': title, 'journal': journal, 'year': str(year), 'ENTRYTYPE': 'article'}]
+        createBib = [{
+            'ID': ID,
+            'author': author,
+            'title': title,
+            'journal': journal,
+            'year': str(year),
+            'ENTRYTYPE': 'article',
+            'number': number,
+            'pages': pages,
+            'month': month,
+            'note': note,
+            'volume': volume
+        }]
+        list2 = [{k: v for k, v in i.items() if v != '' or v.strip() != ''} for i in createBib]
+        print(list2)
         global data
-        print(createBib)
-        crMain.loaddata(createBib)
+        data = data + list2
 
 class Book(QDialog):
     def __init__(self, *args, **kwargs):
         super(Book, self).__init__(*args, **kwargs)
         self.setWindowTitle("Book")
         self.setFixedWidth(400)
-        self.setFixedHeight(400)
+        self.setFixedHeight(650)
 
         self.createButton = QPushButton("Create")
 
@@ -359,13 +395,25 @@ class Book(QDialog):
         self.line4 = QLineEdit()
         self.line5 = QLineEdit()
         self.line6 = QLineEdit()
+        self.line7 = QLineEdit()
+        self.line8 = QLineEdit()
+        self.line9 = QLineEdit()
+        self.line10 = QLineEdit()
+        self.line11 = QLineEdit()
+        self.line12 = QLineEdit()
 
-        self.text1 = QLabel("Author(*):")
-        self.text2 = QLabel("BibTeXKey(*):")
+        self.text1 = QLabel("ID(*):")
+        self.text2 = QLabel("Author(*):")
         self.text3 = QLabel("Title(*):")
-        self.text4 = QLabel("Year:")
-        self.text5 = QLabel("ID:")
-        self.text6 = QLabel("Publisher:")
+        self.text4 = QLabel("Publisher:")
+        self.text5 = QLabel("Year(*):")
+        self.text6 = QLabel("Volume:")
+        self.text7 = QLabel("Series:")
+        self.text8 = QLabel("Address:")
+        self.text9 = QLabel("Edition:")
+        self.text10 = QLabel("Month:")
+        self.text11 = QLabel("Note:")
+        self.text12 = QLabel("ISBN:")
         self.keyText = QLabel("Key values must be filled(*)")
         self.keyText.setStyleSheet('color: red')
 
@@ -383,34 +431,69 @@ class Book(QDialog):
         layout.addWidget(self.line5)
         layout.addWidget(self.text6)
         layout.addWidget(self.line6)
+        layout.addWidget(self.text7)
+        layout.addWidget(self.line7)
+        layout.addWidget(self.text8)
+        layout.addWidget(self.line8)
+        layout.addWidget(self.text9)
+        layout.addWidget(self.line9)
+        layout.addWidget(self.text10)
+        layout.addWidget(self.line10)
+        layout.addWidget(self.text11)
+        layout.addWidget(self.line11)
+        layout.addWidget(self.text12)
+        layout.addWidget(self.line12)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
         self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
-        author = self.line1.text()
-        bibtexkey = self.line2.text()
+        ID = self.line1.text()
+        author = self.line2.text()
         title = self.line3.text()
-        publisher = self.line6.text()
-        if author is "" or title is "" or bibtexkey is "":
+        publisher = self.line4.text()
+        year = self.line5.text()
+        volume = self.line6.text()
+        series = self.line7.text()
+        address = self.line8.text()
+        edition = self.line9.text()
+        month = self.line10.text()
+        note = self.line11.text()
+        isbn = self.line12.text()
+
+        if author == "" or title == "" or ID == "" or year == "":
             QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
             return
 
         try:
-            ID = int(self.line5.text())
-            year = int(self.line4.text())
+            year = int(self.line5.text())
 
         except ValueError:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Year/ID must be a integer')
+            QMessageBox.warning(QMessageBox(), 'Error', 'Year/Edition/Series/Volume must be a integer')
             return
 
-        newfile = open(str(bibtexkey) + ".bib", "w")
-        newfile.write(
-            "@" + "book" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
-                year) + "\nTitle=" + title + "\n publisher=" + publisher + "\n ID=" + str(ID) + "\n}")
+        createBib = [{
+            'ENTRYTYPE': 'book',
+            'ID': ID,
+            'author': author,
+            'title': title,
+            'publisher': publisher,
+            'year': str(year),
+            'volume': volume,
+            'series': series,
+            'address': address,
+            'edition': edition,
+            'month': month,
+            'note': note,
+            'isbn': isbn
+        }]
+        list2 = [{k: v for k, v in i.items() if v != '' or v.strip() != ''} for i in createBib]
 
-        newfile.close()
+        print(list2)
+
+        global data
+        data = data + list2
 
 
 class Journal(QDialog):
@@ -426,13 +509,93 @@ class Journal(QDialog):
         self.line2 = QLineEdit()
         self.line3 = QLineEdit()
         self.line4 = QLineEdit()
-        self.line5 = QLineEdit()
 
         self.text1 = QLabel("Author(*):")
-        self.text2 = QLabel("BibTeXKey(*):")
+        self.text2 = QLabel("ID:")
         self.text3 = QLabel("Title(*):")
         self.text4 = QLabel("Year:")
-        self.text5 = QLabel("ID:")
+        self.keyText = QLabel("Key values must be filled(*)")
+        self.keyText.setStyleSheet('color: red')
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.keyText)
+        layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+        layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+        layout.addWidget(self.createButton)
+        self.createButton.clicked.connect(self.btn_clk)
+        self.createButton.clicked.connect(self.close)
+        self.setLayout(layout)
+
+    def btn_clk(self):
+        author = self.line1.text()
+        ID = self.line2.text()
+        title = self.line3.text()
+        year = self.line4.text()
+
+
+        if author == "" or title == "" or ID == "":
+            QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
+            return
+
+        try:
+            year = int(self.line4.text())
+
+        except ValueError:
+            QMessageBox.warning(QMessageBox(), 'Error', 'Year must be a integer')
+            return
+
+        createBib = [{
+            'ENTRYTYPE': 'journal',
+            'ID': ID,
+            'author': author,
+            'title': title,
+            'year': str(year),
+        }]
+
+        list2 = [{k: v for k, v in i.items() if v != '' or v.strip() != ''} for i in createBib]
+        print(list2)
+        global data
+        data = data + list2
+
+
+class Proceeding(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(Proceeding, self).__init__(*args, **kwargs)
+        self.setWindowTitle("Proceeeding")
+        self.setFixedWidth(400)
+        self.setFixedHeight(650)
+
+        self.createButton = QPushButton("Create")
+
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
+        self.line5 = QLineEdit()
+        self.line6 = QLineEdit()
+        self.line7 = QLineEdit()
+        self.line8 = QLineEdit()
+        self.line9 = QLineEdit()
+        self.line10 = QLineEdit()
+        self.line11 = QLineEdit()
+
+        self.text1 = QLabel("ID(*):")
+        self.text2 = QLabel("Title(*):")
+        self.text3 = QLabel("Year(*):")
+        self.text4 = QLabel("Editor:")
+        self.text5 = QLabel("Volume:")
+        self.text6 = QLabel("Series:")
+        self.text7 = QLabel("Address:")
+        self.text8 = QLabel("Month:")
+        self.text9 = QLabel("Organization:")
+        self.text10 = QLabel("Publisher:")
+        self.text11 = QLabel("Note:")
         self.keyText = QLabel("Key values must be filled(*)")
         self.keyText.setStyleSheet('color: red')
 
@@ -448,81 +611,67 @@ class Journal(QDialog):
         layout.addWidget(self.line4)
         layout.addWidget(self.text5)
         layout.addWidget(self.line5)
+        layout.addWidget(self.text6)
+        layout.addWidget(self.line6)
+        layout.addWidget(self.text7)
+        layout.addWidget(self.line7)
+        layout.addWidget(self.text8)
+        layout.addWidget(self.line8)
+        layout.addWidget(self.text9)
+        layout.addWidget(self.line9)
+        layout.addWidget(self.text10)
+        layout.addWidget(self.line10)
+        layout.addWidget(self.text11)
+        layout.addWidget(self.line11)
+
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
         self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
-        author = self.line1.text()
-        bibtexkey = self.line2.text()
-        title = self.line3.text()
-        if author is "" or title is "" or bibtexkey is "":
+        ID = self.line1.text()
+        title = self.line2.text()
+        year = self.line3.text()
+        editor = self.line4.text()
+        volume = self.line5.text()
+        series = self.line6.text()
+        address = self.line7.text()
+        month = self.line8.text()
+        organization = self.line9.text()
+        publisher = self.line10.text()
+        note = self.line11.text()
+
+        if title == "" or year == "":
             QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
             return
 
         try:
-            ID = int(self.line5.text())
-            year = int(self.line4.text())
+            year = int(self.line3.text())
 
         except ValueError:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Year/ID must be a integer')
+            QMessageBox.warning(QMessageBox(), 'Error', 'Year/Volume/Series must be a integer')
             return
 
-        newfile = open(str(bibtexkey) + ".bib", "w")
-        newfile.write(
-            "@" + "journal" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
-                year) + "\nTitle=" + title + "\n ID=" + str(ID) + "\n}")
+        createBib = [{
+            'ENTRYTYPE': 'proceedings',
+            'ID': ID,
+            'title': title,
+            'year': str(year),
+            'author': editor,
+            'volume': volume,
+            'series': series,
+            'address': address,
+            'month': month,
+            'organization': organization,
+            'publisher': publisher,
+            'note': note
+        }]
 
-        newfile.close()
-
-
-class Proceeding(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(Proceeding, self).__init__(*args, **kwargs)
-        self.setWindowTitle("Proceeeding")
-        self.setFixedWidth(400)
-        self.setFixedHeight(200)
-
-        self.createButton = QPushButton("Create")
-
-        self.line1 = QLineEdit()
-        self.line2 = QLineEdit()
-
-        self.text1 = QLabel("Title(*):")
-        self.text2 = QLabel("Year:")
-        self.keyText = QLabel("Key values must be filled(*)")
-        self.keyText.setStyleSheet('color: red')
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.keyText)
-        layout.addWidget(self.text1)
-        layout.addWidget(self.line1)
-        layout.addWidget(self.text2)
-        layout.addWidget(self.line2)
-        layout.addWidget(self.createButton)
-        self.createButton.clicked.connect(self.btn_clk)
-        self.createButton.clicked.connect(self.close)
-        self.setLayout(layout)
-
-    def btn_clk(self):
-        title = self.line1.text()
-        if title is "":
-            QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
-            return
-
-        try:
-            year = int(self.line2.text())
-
-        except ValueError:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Year/ID must be a integer')
-            return
-
-        newfile = open("Proceeding.bib", "w")
-        newfile.write(
-            "@" + "proceeding" + "{" "\nYear=" + str(year) + "\nTitle=" + title + "\n}")
-
-        newfile.close()
+        list2 = [{k: v for k, v in i.items() if v != '' or v.strip() != ''} for i in createBib]
+        print(list2)
+        global data
+        data = data + list2
 
 
 class InProceeding(QDialog):
@@ -539,14 +688,12 @@ class InProceeding(QDialog):
         self.line3 = QLineEdit()
         self.line4 = QLineEdit()
         self.line5 = QLineEdit()
-        self.line6 = QLineEdit()
 
         self.text1 = QLabel("Author(*):")
-        self.text2 = QLabel("BibTeXKey(*):")
+        self.text2 = QLabel("ID(*):")
         self.text3 = QLabel("Title(*):")
-        self.text4 = QLabel("Year:")
-        self.text5 = QLabel("ID:")
-        self.text6 = QLabel("Book Title:")
+        self.text4 = QLabel("Year(*):")
+        self.text5 = QLabel("Book Title:")
         self.keyText = QLabel("Key values must be filled(*)")
         self.keyText.setStyleSheet('color: red')
 
@@ -571,10 +718,10 @@ class InProceeding(QDialog):
 
     def btn_clk(self):
         author = self.line1.text()
-        bibtexkey = self.line2.text()
+        ID = self.line2.text()
         title = self.line3.text()
-        booktitle = self.line6.text()
-        if author is "" or title is "" or bibtexkey is "":
+        booktitle = self.line5.text()
+        if author == "" or title == "" or ID == "":
             QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
             return
 
@@ -586,12 +733,19 @@ class InProceeding(QDialog):
             QMessageBox.warning(QMessageBox(), 'Error', 'Year/ID must be a integer')
             return
 
-        newfile = open(str(bibtexkey) + ".bib", "w")
-        newfile.write(
-            "@" + "inproceeding" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
-                year) + "\nTitle=" + title + "\n book title=" + booktitle + "\n ID=" + str(ID) + "\n}")
+        createBib = [{
+            'ENTRYTYPE': 'inproceedings',
+            'ID': ID,
+            'author': author,
+            'title': title,
+            'year': str(year),
+            'booktitle': booktitle
+        }]
 
-        newfile.close()
+        list2 = [{k: v for k, v in i.items() if v != '' or v.strip() != ''} for i in createBib]
+        print(list2)
+        global data
+        data = data + list2
 
 
 class MasterThesis(QDialog):
@@ -610,13 +764,18 @@ class MasterThesis(QDialog):
         self.line4 = QLineEdit()
         self.line5 = QLineEdit()
         self.line6 = QLineEdit()
+        self.line7 = QLineEdit()
+        self.line8 = QLineEdit()
 
-        self.text1 = QLabel("Author(*):")
-        self.text2 = QLabel("BibTeXKey(*):")
+        self.text1 = QLabel("ID(*):")
+        self.text2 = QLabel("Author(*):")
         self.text3 = QLabel("Title(*):")
-        self.text4 = QLabel("Year:")
-        self.text5 = QLabel("ID:")
-        self.text6 = QLabel("School:")
+        self.text4 = QLabel("School:")
+        self.text5 = QLabel("Year:")
+        self.text6 = QLabel("Address:")
+        self.text7 = QLabel("Month:")
+        self.text8 = QLabel("Note:")
+
         self.keyText = QLabel("Key values must be filled(*)")
         self.keyText.setStyleSheet('color: red')
 
@@ -634,34 +793,52 @@ class MasterThesis(QDialog):
         layout.addWidget(self.line5)
         layout.addWidget(self.text6)
         layout.addWidget(self.line6)
+        layout.addWidget(self.text7)
+        layout.addWidget(self.line7)
+        layout.addWidget(self.text8)
+        layout.addWidget(self.line8)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
         self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
-        author = self.line1.text()
-        bibtexkey = self.line2.text()
+        ID = self.line1.text()
+        author = self.line2.text()
         title = self.line3.text()
-        school = self.line6.text()
-        if author is "" or title is "" or bibtexkey is "":
+        school = self.line4.text()
+        year = self.line5.text()
+        address = self.line6.text()
+        month = self.line7.text()
+        note = self.line8.text()
+
+        if author == "" or title == "" or ID == "":
             QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
             return
 
         try:
-            ID = int(self.line5.text())
-            year = int(self.line4.text())
+            year = int(self.line5.text())
 
         except ValueError:
             QMessageBox.warning(QMessageBox(), 'Error', 'Year/ID must be a integer')
             return
 
-        newfile = open(str(bibtexkey) + ".bib", "w")
-        newfile.write(
-            "@" + "masterthesis" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
-                year) + "\nTitle=" + title + "\n school=" + school + "\n ID=" + str(ID) + "\n}")
+        createBib = [{
+            'ENTRYTYPE': 'mastersthesis',
+            'ID': ID,
+            'author': author,
+            'title': title,
+            'school': school,
+            'year': str(year),
+            'address': address,
+            'month': month,
+            'note': note
+        }]
 
-        newfile.close()
+        list2 = [{k: v for k, v in i.items() if v != '' or v.strip() != ''} for i in createBib]
+        print(list2)
+        global data
+        data = data + list2
 
 
 class PhdThesis(QDialog):
@@ -679,13 +856,18 @@ class PhdThesis(QDialog):
         self.line4 = QLineEdit()
         self.line5 = QLineEdit()
         self.line6 = QLineEdit()
+        self.line7 = QLineEdit()
+        self.line8 = QLineEdit()
 
-        self.text1 = QLabel("Author(*):")
-        self.text2 = QLabel("BibTeXKey(*):")
+        self.text1 = QLabel("ID(*):")
+        self.text2 = QLabel("Author(*):")
         self.text3 = QLabel("Title(*):")
-        self.text4 = QLabel("Year:")
-        self.text5 = QLabel("ID:")
-        self.text6 = QLabel("School:")
+        self.text4 = QLabel("School:")
+        self.text5 = QLabel("Year(*):")
+        self.text6 = QLabel("Address:")
+        self.text7 = QLabel("Month:")
+        self.text8 = QLabel("Note:")
+
         self.keyText = QLabel("Key values must be filled(*)")
         self.keyText.setStyleSheet('color: red')
 
@@ -703,35 +885,52 @@ class PhdThesis(QDialog):
         layout.addWidget(self.line5)
         layout.addWidget(self.text6)
         layout.addWidget(self.line6)
+        layout.addWidget(self.text7)
+        layout.addWidget(self.line7)
+        layout.addWidget(self.text8)
+        layout.addWidget(self.line8)
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
         self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
-        author = self.line1.text()
-        bibtexkey = self.line2.text()
+        ID = self.line1.text()
+        author = self.line2.text()
         title = self.line3.text()
-        school = self.line6.text()
+        school = self.line4.text()
+        year = self.line5.text()
+        address = self.line6.text()
+        month = self.line7.text()
+        note = self.line8.text()
 
-        if author is "" or title is "" or bibtexkey is "":
+        if author == "" or title == "" or ID == "":
             QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
             return
 
         try:
-            ID = int(self.line5.text())
-            year = int(self.line4.text())
+            year = int(self.line5.text())
 
         except ValueError:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Year/ID must be a integer')
+            QMessageBox.warning(QMessageBox(), 'Error', 'Year must be a integer')
             return
 
-        newfile = open(str(bibtexkey) + ".bib", "w")
-        newfile.write(
-            "@" + "phdthesis" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
-                year) + "\nTitle=" + title + "\n school=" + school + "\n ID=" + str(ID) + "\n}")
+        createBib = [{
+            'ENTRYTYPE': 'phdthesis',
+            'ID': ID,
+            'author': author,
+            'title': title,
+            'school': school,
+            'year': str(year),
+            'address': address,
+            'month': month,
+            'note': note
+        }]
 
-        newfile.close()
+        list2 = [{k: v for k, v in i.items() if v != '' or v.strip() != ''} for i in createBib]
+        print(list2)
+        global data
+        data = data + list2
 
 
 class Unpublished(QDialog):
@@ -739,17 +938,22 @@ class Unpublished(QDialog):
         super(Unpublished, self).__init__(*args, **kwargs)
         self.setWindowTitle("Unpublished")
         self.setFixedWidth(400)
-        self.setFixedHeight(250)
+        self.setFixedHeight(400)
 
         self.createButton = QPushButton("Create")
 
         self.line1 = QLineEdit()
         self.line2 = QLineEdit()
         self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
+        self.line5 = QLineEdit()
 
-        self.text1 = QLabel("Author(*):")
-        self.text2 = QLabel("Title(*):")
-        self.text3 = QLabel("Note:")
+        self.text1 = QLabel("ID(*):")
+        self.text2 = QLabel("Author(*):")
+        self.text3 = QLabel("Title(*):")
+        self.text4 = QLabel("Year(*):")
+        self.text5 = QLabel("Note:")
+
         self.keyText = QLabel("Key values must be filled(*)")
         self.keyText.setStyleSheet('color: red')
 
@@ -761,51 +965,134 @@ class Unpublished(QDialog):
         layout.addWidget(self.line2)
         layout.addWidget(self.text3)
         layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+        layout.addWidget(self.text5)
+        layout.addWidget(self.line5)
+
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
         self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
-        author = self.line1.text()
-        title = self.line2.text()
-        note = self.line3.text()
-        if author is "" or title is "":
+        ID = self.line1.text()
+        author = self.line2.text()
+        title = self.line3.text()
+        year = self.line4.text()
+        note = self.line5.text()
+
+        if author == "" or title == "" or ID == "" or year == "":
             QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
             return
 
+        try:
+            year = int(self.line4.text())
 
-        newfile = open("Unpublished.bib", "w")
-        newfile.write(
-            "@" + "unpublished" + "{," + "\nAuthor=" + author + "\nTitle=" + title + "\n note=" + note + "\n}")
+        except ValueError:
+            QMessageBox.warning(QMessageBox(), 'Error', 'Year must be a integer')
+            return
 
-        newfile.close()
+        createBib = [{
+            'ENTRYTYPE': 'unpublished',
+            'ID': ID,
+            'author': author,
+            'title': title,
+            'year': str(year),
+            'note': note
+        }]
 
+        list2 = [{k: v for k, v in i.items() if v != '' or v.strip() != ''} for i in createBib]
+        print(list2)
+        global data
+        data = data + list2
 
 class Misc(QDialog):
     def __init__(self, *args, **kwargs):
         super(Misc, self).__init__(*args, **kwargs)
-        self.setWindowTitle("Misc")
-        self.setFixedWidth(250)
-        self.setFixedHeight(100)
+        self.setWindowTitle("Unpublished")
+        self.setFixedWidth(400)
+        self.setFixedHeight(400)
 
         self.createButton = QPushButton("Create")
 
-        self.text1 = QLabel("Click create for creating a misc file")
+        self.line1 = QLineEdit()
+        self.line2 = QLineEdit()
+        self.line3 = QLineEdit()
+        self.line4 = QLineEdit()
+        self.line5 = QLineEdit()
+        self.line6 = QLineEdit()
+        self.line7 = QLineEdit()
+
+        self.text1 = QLabel("ID(*):")
+        self.text2 = QLabel("Author(*):")
+        self.text3 = QLabel("Title(*):")
+        self.text4 = QLabel("How Published:")
+        self.text5 = QLabel("Month:")
+        self.text6 = QLabel("Year(*):")
+        self.text7 = QLabel("Note:")
+
+        self.keyText = QLabel("Key values must be filled(*)")
+        self.keyText.setStyleSheet('color: red')
 
         layout = QVBoxLayout()
+        layout.addWidget(self.keyText)
         layout.addWidget(self.text1)
+        layout.addWidget(self.line1)
+        layout.addWidget(self.text2)
+        layout.addWidget(self.line2)
+        layout.addWidget(self.text3)
+        layout.addWidget(self.line3)
+        layout.addWidget(self.text4)
+        layout.addWidget(self.line4)
+        layout.addWidget(self.text5)
+        layout.addWidget(self.line5)
+        layout.addWidget(self.text6)
+        layout.addWidget(self.line6)
+        layout.addWidget(self.text7)
+        layout.addWidget(self.line7)
+
+
         layout.addWidget(self.createButton)
         self.createButton.clicked.connect(self.btn_clk)
         self.createButton.clicked.connect(self.close)
         self.setLayout(layout)
 
     def btn_clk(self):
-        newfile = open("misc.bib", "w")
-        newfile.write(
-            "@" + "misc" + "{" "\n}")
+        ID = self.line1.text()
+        author = self.line2.text()
+        title = self.line3.text()
+        howpublished = self.line4.text()
+        month = self.line5.text()
+        year = self.line6.text()
+        note = self.line7.text()
 
-        newfile.close()
+        if author == "" or title == "" or ID == "" or year == "":
+            QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
+            return
+
+        try:
+            year = int(self.line6.text())
+
+        except ValueError:
+            QMessageBox.warning(QMessageBox(), 'Error', 'Year must be a integer')
+            return
+
+        createBib = [{
+            'ENTRYTYPE': 'misc',
+            'ID': ID,
+            'author': author,
+            'title': title,
+            'howpublished': howpublished,
+            'month': month,
+            'year': str(year),
+            'note': note
+        }]
+
+        list2 = [{k: v for k, v in i.items() if v != '' or v.strip() != ''} for i in createBib]
+        print(list2)
+        global data
+        data = data + list2
 
 
 class FilterDialog(QDialog):
@@ -1099,14 +1386,18 @@ class SearchDialog(QDialog):
     def btn_clk(self):
 
         # self.input = self.line1.text()
-
         input = self.line1.text()
-        global data
+
         item = self.searchedList
-        for item in data:
+        for item in MainWindow.data:
             for k, v in item.items():
                 if input in v:
-                    print("found: " + str(item))
+                    self.searchedList.append(item)
+
+        print(self.searchedList)
+
+
+
 
 
 class CreateAuthorIdentityDialog(QDialog):
