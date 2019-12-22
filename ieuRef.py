@@ -1081,18 +1081,14 @@ class SearchDialog(QDialog):
     def btn_clk(self):
 
         # self.input = self.line1.text()
-        input = self.line1.text()
 
+        input = self.line1.text()
+        global data
         item = self.searchedList
-        for item in MainWindow.data:
+        for item in data:
             for k, v in item.items():
                 if input in v:
-                    self.searchedList.append(item)
-
-        print(self.searchedList)
-
-
-
+                    print("found: " + str(item))
 
 
 class CreateAuthorIdentityDialog(QDialog):
