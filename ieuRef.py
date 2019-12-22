@@ -1,5 +1,5 @@
 import sys
-from msilib import Dialog
+
 
 import bibtexparser
 from PyQt5 import QtWidgets
@@ -12,17 +12,16 @@ import csv
 
 from bibtexparser.bparser import BibTexParser
 
-
+data = []
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setWindowIcon(QIcon('icon/logo.png'))
         file_menu = self.menuBar().addMenu("&File")
-
+        global data
         help_menu = self.menuBar().addMenu("&About")
         self.setWindowTitle("IeuRef")
         self.setMinimumSize(1000, 800)
-        MainWindow.data = []
         self.tableWidget = QTableWidget()
         self.setCentralWidget(self.tableWidget)
         self.tableWidget.setAlternatingRowColors(True)
@@ -58,10 +57,6 @@ class MainWindow(QMainWindow):
         searchBibtex_action.triggered.connect(self.search)
         file_menu.addAction(searchBibtex_action)
 
-        deleteAllBibtex_action = QAction(QIcon("icon/delete.png"), "Delete All", self)
-        deleteAllBibtex_action.triggered.connect(self.deleteAllBibtex)
-        file_menu.addAction(searchBibtex_action)
-
         filterBibtex_action = QAction(QIcon("icon/filterBibtex.png"), "Filter BibTeX ", self)
         filterBibtex_action.triggered.connect(self.filterBibtex)
         file_menu.addAction(filterBibtex_action)
@@ -70,6 +65,10 @@ class MainWindow(QMainWindow):
         createAuthorIdentityBibtex_action = QAction(QIcon("icon/identity.png"), "Create Author Identity", self)
         createAuthorIdentityBibtex_action.triggered.connect(self.createAuthorIdentity)
         file_menu.addAction(createAuthorIdentityBibtex_action)
+
+        deleteAllBibtex_action = QAction(QIcon("icon/delete.png"), "Delete All", self)
+        deleteAllBibtex_action.triggered.connect(self.deleteAllBibtex)
+        file_menu.addAction(deleteAllBibtex_action)
 
         btn_selectBibtex_action = QAction(QIcon("icon/addBibtex.png"), "Select BibTeX file", self)
         btn_selectBibtex_action.triggered.connect(self.selectBibtex)
@@ -97,26 +96,29 @@ class MainWindow(QMainWindow):
         btn_createAuthorIdentityBibtex_action.setStatusTip('Create Author Identity')
         toolbar.addAction(btn_createAuthorIdentityBibtex_action)
 
-        btn_deleteAllBibtex_action = QAction(QIcon("icon/delete.png"), "Delete All", self)
-        btn_deleteAllBibtex_action.triggered.connect(self.deleteAllBibtex)
-        btn_deleteAllBibtex_action.setStatusTip('Delete All')
-        toolbar.addAction(btn_deleteAllBibtex_action)
+        btn_deleteSelected_action = QAction(QIcon("icon/delete.png"), "Delete Selected", self)
+        btn_deleteSelected_action.triggered.connect(self.deleteSelected)
+        btn_deleteSelected_action.setStatusTip('Delete All')
+        toolbar.addAction(btn_deleteSelected_action)
 
     def loaddata(self, keyys):
-        MainWindow.data = MainWindow.data + keyys  # append(entry)
-        print(MainWindow.data)
+        print("Selam")
+        global data
+        data = data + keyys  # append(entry)
+        print(data)
         # newData = [(author, year, type1, title)]
         # entry = MainWindow.data
         # entry.append((author, year, type1, title))
         # print("------------------")
         # print(entry)
-        self.printData(keyys)
+        self.printData()
 
-    def printData(self, data):
+    def printData(self):
         # numrows = len(data)  # 6 rows in your example
         # numcols = len(data[0])
         # Printing data to the QTableWidget
         row = self.tableWidget.rowCount()
+        global data
         for item in data:
             self.tableWidget.insertRow(row)
             self.tableWidget.setItem(row, 0, QTableWidgetItem(item["author"]))
@@ -147,9 +149,20 @@ class MainWindow(QMainWindow):
         dlg.exec_()
 
     def deleteAllBibtex(self):
-        MainWindow.data.clear()
-        print(MainWindow.data)
-        self.tableWidget.setRowCount(0)
+        buttonReply = QMessageBox.question(self, 'Confirm', "Do you want to delete all?",
+                                           QMessageBox.Yes | QMessageBox.No)
+        if buttonReply == QMessageBox.Yes:
+            MainWindow.data.clear()
+            self.tableWidget.setRowCount(0)
+        else:
+            return
+
+
+
+    def deleteSelected(self):
+        print("delete selected")
+        r = self.tableWidget.selectionModel().selectedItems
+        print(r)
 
     def createAuthorIdentity(self):
         dlg = CreateAuthorIdentityDialog()
@@ -215,28 +228,29 @@ class CreateDialog(QDialog):
         if data == "Article":
             dlc = Article()
             dlc.exec_()
-        if data == "Book":
+
+        elif data == "Book":
             dlc = Book()
             dlc.exec_()
-        if data == "Journal":
+        elif data == "Journal":
             dlc = Journal()
             dlc.exec_()
-        if data == "Proceeding":
+        elif data == "Proceeding":
             dlc = Proceeding()
             dlc.exec_()
-        if data == "InProceeding":
+        elif data == "InProceeding":
             dlc = InProceeding()
             dlc.exec_()
-        if data == "MasterThesis":
+        elif data == "MasterThesis":
             dlc = MasterThesis()
             dlc.exec_()
-        if data == "PhdThesis":
+        elif data == "PhdThesis":
             dlc = PhdThesis()
             dlc.exec_()
-        if data == "Unpublished":
+        elif data == "Unpublished":
             dlc = Unpublished()
             dlc.exec_()
-        if data == "Misc":
+        elif data == "Misc":
             dlc = Misc()
             dlc.exec_()
 
@@ -244,7 +258,7 @@ class CreateDialog(QDialog):
 class Article(QDialog):
     def __init__(self, *args, **kwargs):
         super(Article, self).__init__(*args, **kwargs)
-
+        createMain = MainWindow
         self.setWindowTitle("Article")
         self.setFixedWidth(400)
         self.setFixedHeight(400)
@@ -287,10 +301,13 @@ class Article(QDialog):
         self.setLayout(layout)
 
     def btn_clk(self):
-        journal = self.line6.text()
+        crMain = MainWindow()
         author = self.line1.text()
-        title = self.line3.text()
         bibtexkey = self.line2.text()
+        title = self.line3.text()
+        year = self.line4.text()
+        ID = self.line5.text()
+        journal = self.line6.text()
 
         if author is "" or title is "" or bibtexkey is "":
             QMessageBox.warning(QMessageBox(), 'Error', 'Key values can not be null')
@@ -304,13 +321,10 @@ class Article(QDialog):
             QMessageBox.warning(QMessageBox(), 'Error', 'Year/ID must be a integer')
             return
 
-        newfile = open(str(bibtexkey) + ".bib", "w")
-        newfile.write(
-            "@" + "article" + "{" + str(bibtexkey) + "," + "\nAuthor=" + author + "\nYear=" + str(
-                year) + "\nTitle=" + title + "\n journal=" + journal + "\n ID=" + str(ID) + "\n}")
-
-        newfile.close()
-
+        createBib = [{'ID': ID, 'author': author, 'title': title, 'journal': journal, 'year': str(year), 'ENTRYTYPE': 'article'}]
+        global data
+        print(createBib)
+        crMain.loaddata(createBib)
 
 class Book(QDialog):
     def __init__(self, *args, **kwargs):
@@ -973,10 +987,12 @@ class FilterDialog(QDialog):
 
 
 class SearchDialog(QDialog):
+    searchedList = []
     def __init__(self, *args, **kwargs):
         super(SearchDialog, self).__init__(*args, **kwargs)
         # Pelinsu Arslan Task
         # Search code will be here
+        self.searchString = "Shi"
 
         self.setWindowTitle("Search")
         self.setFixedWidth(300)
@@ -997,7 +1013,6 @@ class SearchDialog(QDialog):
         layout.addWidget(self.searchButton)
         self.searchButton.clicked.connect(self.btn_clk)
         self.setLayout(layout)
-        self.searchedList = list()
 
     def btn_clk(self):
 
@@ -1008,7 +1023,12 @@ class SearchDialog(QDialog):
         for item in MainWindow.data:
             for k, v in item.items():
                 if input in v:
-                    print("found: " + str(item))
+                    self.searchedList.append(item)
+
+        print(self.searchedList)
+
+
+
 
 
 class CreateAuthorIdentityDialog(QDialog):
