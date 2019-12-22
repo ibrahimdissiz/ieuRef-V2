@@ -1,18 +1,22 @@
 import sys
 
-
 import bibtexparser
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget
+from PyQt5.QtGui import QPixmap
+
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QTableWidgetItem, QMessageBox
 import csv
-
 from bibtexparser.bparser import BibTexParser
 
+
+
 data = []
+searchedList = []
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -45,6 +49,10 @@ class MainWindow(QMainWindow):
 
         statusbar = QStatusBar()
         self.setStatusBar(statusbar)
+
+        help_action = QAction(QIcon("icon/help.png"), "Help", self)
+        help_action.triggered.connect(self.help)
+        help_menu.addAction(help_action)
 
         selectBibtex_action = QAction(QIcon("icon/addBibtex.png"), "Select BibTeX file", self)
         selectBibtex_action.triggered.connect(self.selectBibtex)
@@ -112,6 +120,9 @@ class MainWindow(QMainWindow):
         toolbar.addAction(btn_deleteSelected_action)
 
 
+    def help(self):
+        dlg = HelpDialog()
+        dlg.exec_()
 
     def loaddata(self, keyys):
         print("Selam")
@@ -148,6 +159,22 @@ class MainWindow(QMainWindow):
         #         print(column)
         #         self.tableWidget.setItem(row, column, QTableWidgetItem((data[row][column])))
 
+    def printSearchedList(self):
+        # numrows = len(data)  # 6 rows in your example
+        # numcols = len(data[0])
+        # Printing data to the QTableWidget
+        global searchedList
+        row = self.tableWidget.rowCount()
+
+        for item in searchedList:
+            self.tableWidget.insertRow(row)
+            self.tableWidget.setItem(row, 0, QTableWidgetItem(item["author"]))
+            self.tableWidget.setItem(row, 1, QTableWidgetItem(item["year"]))
+            self.tableWidget.setItem(row, 2, QTableWidgetItem(item["ENTRYTYPE"]))
+            self.tableWidget.setItem(row, 3, QTableWidgetItem(item["title"]))
+            row = row + 1
+            print("row", row)
+
     def createBibtex(self):
         dlg = CreateDialog()
         dlg.exec_()
@@ -156,10 +183,12 @@ class MainWindow(QMainWindow):
 
     def search(self):
         dlg = SearchDialog()
-        # dlg.exec_()
-        # if dlg.accepted():
-
         dlg.exec_()
+        global searchedList
+        self.tableWidget.setRowCount(0)
+        self.printSearchedList()
+        searchedList.clear()
+
 
     def filterBibtex(self):
         dlg = FilterDialog()
@@ -169,18 +198,19 @@ class MainWindow(QMainWindow):
         buttonReply = QMessageBox.question(self, 'Confirm', "Do you want to delete all?",
                                            QMessageBox.Yes | QMessageBox.No)
         if buttonReply == QMessageBox.Yes:
-            MainWindow.data.clear()
+            data.clear()
             self.tableWidget.setRowCount(0)
         else:
             return
 
     def saveBibtex(self):
+        global data
+        newfile = open("Unpublished.bib", "w")
+        for x in data:
+            newfile.write(
+                "@" + data["ENTRYTYPE"])
+            newfile.close()
 
-        options = QFileDialog.Options()
-        bibtexFile, _ = QFileDialog.getSaveFileName(self, "Save Bibtex", "", "BibTeX Files (*.bib)", options=options)
-
-        bibtexFile = open(bibtexFile, "w")
-        bibtexFile.write("içi boş")
 
     def deleteSelected(self):
         print("delete selected")
@@ -212,6 +242,22 @@ class MainWindow(QMainWindow):
                     QMessageBox.warning(QMessageBox(), 'Error', 'Could not load Bibtex file.')
         else:
             return
+
+
+class HelpDialog(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(HelpDialog, self).__init__(*args, **kwargs)
+        self.im = QPixmap("./icon/help1.png")
+        self.label = QLabel()
+        self.label.setPixmap(self.im)
+
+        self.grid = QGridLayout()
+        self.grid.addWidget(self.label, 1, 1)
+        self.setLayout(self.grid)
+
+        self.setGeometry(50, 50, 320, 200)
+        self.setWindowTitle("Help File")
+        self.show()
 
 
 class CreateDialog(QDialog):
@@ -1351,31 +1397,22 @@ class FilterDialog(QDialog):
         print(self.filteredlist)
 
 
-
-
-
-
 class SearchDialog(QDialog):
-    searchedList = []
     def __init__(self, *args, **kwargs):
         super(SearchDialog, self).__init__(*args, **kwargs)
         # Pelinsu Arslan Task
         # Search code will be here
         self.searchString = "Shi"
-
         self.setWindowTitle("Search")
         self.setFixedWidth(300)
         self.setFixedHeight(100)
         layout = QFormLayout()
-
         self.setWindowTitle("Search")
         self.setFixedWidth(400)
         self.setFixedHeight(100)
         self.searchButton = QPushButton("Search")
-
         self.line1 = QLineEdit()
         self.text1 = QLabel("Please enter")
-
         layout = QVBoxLayout()
         layout.addWidget(self.text1)
         layout.addWidget(self.line1)
@@ -1384,20 +1421,14 @@ class SearchDialog(QDialog):
         self.setLayout(layout)
 
     def btn_clk(self):
-
-        # self.input = self.line1.text()
         input = self.line1.text()
-
-        item = self.searchedList
-        for item in MainWindow.data:
+        global data
+        global searchedList
+        item = searchedList
+        for item in data:
             for k, v in item.items():
                 if input in v:
-                    self.searchedList.append(item)
-
-        print(self.searchedList)
-
-
-
+                    searchedList.append(item)
 
 
 class CreateAuthorIdentityDialog(QDialog):
