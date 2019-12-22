@@ -1,7 +1,7 @@
 import sys
 from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
-
+import re
 import bibtexparser
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import *
@@ -19,6 +19,7 @@ from bibtexparser.bparser import BibTexParser
 
 data = []
 searchedList = []
+filteredlist=[]
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -177,6 +178,22 @@ class MainWindow(QMainWindow):
             row = row + 1
             print("row", row)
 
+    def printfilteredlist(self):
+        # numrows = len(data)  # 6 rows in your example
+        # numcols = len(data[0])
+        # Printing data to the QTableWidget
+        global filteredlist
+        row = self.tableWidget.rowCount()
+
+        for item in filteredlist:
+            self.tableWidget.insertRow(row)
+            self.tableWidget.setItem(row, 0, QTableWidgetItem(item["author"]))
+            self.tableWidget.setItem(row, 1, QTableWidgetItem(item["year"]))
+            self.tableWidget.setItem(row, 2, QTableWidgetItem(item["ENTRYTYPE"]))
+            self.tableWidget.setItem(row, 3, QTableWidgetItem(item["title"]))
+            row = row + 1
+            print("row", row)
+
     def createBibtex(self):
         searchedList.clear()
         dlg = CreateDialog()
@@ -197,6 +214,10 @@ class MainWindow(QMainWindow):
     def filterBibtex(self):
         dlg = FilterDialog()
         dlg.exec_()
+        global filteredlist
+        self.tableWidget.setRowCount(0)
+        self.printfilteredlist()
+        filteredlist.clear()
 
     def deleteAllBibtex(self):
         buttonReply = QMessageBox.question(self, 'Confirm', "Do you want to delete all?",
@@ -1161,7 +1182,7 @@ class FilterDialog(QDialog):
     rowdatatitle = []
     rowdatatype = []
     yeardata = []
-    filteredlist=[]
+
 
 
     def __init__(self, *args, **kwargs):
@@ -1265,6 +1286,8 @@ class FilterDialog(QDialog):
         self.pushButtonsearch.clicked.connect(self.saveTypetabel)
         self.pushButtonsearch.clicked.connect(self.saveYear)
         self.pushButtonsearch.clicked.connect(self.filtering)
+        self.pushButtonsearch.clicked.connect(self.close)
+
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -1364,51 +1387,59 @@ class FilterDialog(QDialog):
         #print(self.yeardata)
 
     def filtering(self):
+        global data
+        global filteredlist
 
-        item=self.filteredlist
+        item= filteredlist
+
         # searching author
         while bool(self.rowdataauthor):
             for a in self.rowdataauthor:
                 input=a
-                for item in MainWindow.data:
-                    for b in item.items():
+
+                for item in data:
+                    for  b in item.items():
                         if input in b:
-                            self.filteredlist.append(item)
-                            #print(self.filteredlist)
+                            filteredlist.append(item)
+                    print(filteredlist)
+
             break
           # searching title
 
         while bool(self.rowdatatitle):
             for c in self.rowdatatitle:
                 input=c
-                for item in MainWindow.data:
+                for item in data:
                     for d in item.items():
                         if input in d:
-                            self.filteredlist.append(item)
-                            #print(self.filteredlist)
+                            filteredlist.append(item)
+                    print(filteredlist)
             break
          #searching type
         while bool(self.rowdatatype):
             for e in self.rowdatatype:
                 input=e
-                for item in MainWindow.data:
+                for item in data:
                     for f in item.items():
                         if input in f:
-                            self.filteredlist.append(item)
-                            #print(self.filteredlist)
+                            filteredlist.append(item)
+                    print(filteredlist)
             break
-           # searching year
+        #    # searching year
         while bool(self.yeardata):
             for g in self.yeardata:
                 input=g
-                for item in MainWindow.data:
+                for item in data:
                     for h in item.items():
                         if input in h:
-                            self.filteredlist.append(item)
-                            #print(self.filteredlist)
+                            filteredlist.append(item)
+                    print(filteredlist)
             break
 
-        print(self.filteredlist)
+
+
+
+
 
 
 class SearchDialog(QDialog):
